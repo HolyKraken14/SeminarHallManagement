@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Menu, Home, User, Calendar, Mail, LogOut } from "lucide-react";
 import BookingTab from './BookingTab';
 
 const Dashboard = () => {
   const [seminarHalls, setSeminarHalls] = useState([]);
-  const [bookings, setBookings] = useState([]); // New state for bookings
+  const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("Dashboard");
@@ -12,14 +13,12 @@ const Dashboard = () => {
   const [selectedHall, setSelectedHall] = useState(null);
   const navigate = useNavigate();
 
-  // Fetch seminar halls from backend
+  // Existing fetch functions remain the same
   useEffect(() => {
     const fetchSeminarHalls = async () => {
       try {
         const response = await fetch("http://localhost:5000/api/seminar-halls");
-        if (!response.ok) {
-          throw new Error("Failed to fetch seminar halls");
-        }
+        if (!response.ok) throw new Error("Failed to fetch seminar halls");
         const data = await response.json();
         setSeminarHalls(data);
       } catch (err) {
@@ -28,340 +27,266 @@ const Dashboard = () => {
         setLoading(false);
       }
     };
-
     fetchSeminarHalls();
   }, []);
 
-  // Fetch user bookings from backend
   useEffect(() => {
     const fetchBookings = async () => {
       try {
         const response = await fetch("http://localhost:5000/api/bookings/user", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          }
-          
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
         });
-        if (!response.ok) {
-          throw new Error("Failed to fetch bookings");
-        }
+        if (!response.ok) throw new Error("Failed to fetch bookings");
         const data = await response.json();
         setBookings(data.bookings);
       } catch (err) {
         setError(err.message);
       }
     };
-
     fetchBookings();
   }, []);
 
-  // Logout function
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login");
   };
 
-  // Toggle Sidebar
   const toggleSidebar = () => {
-    setIsSidebarVisible((prevState) => !prevState);
+    setIsSidebarVisible(prev => !prev);
   };
 
-  // Profile Box
   const ProfileBox = () => {
-    const username = "John Doe"; // Replace with actual username from backend
-    const email = "johndoe@rvce.edu.in"; // Replace with actual email from backend
+    const username = "John Doe";
+    const email = "johndoe@rvce.edu.in";
 
     return (
-      <div style={{ padding: "1rem", background: "#f1f1f1", borderRadius: "5px" }}>
-        <p><strong>Username:</strong> {username}</p>
-        <p><strong>Email:</strong> {email}</p>
+      <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl mx-auto">
+        <h2 className="text-2xl font-bold mb-6 text-gray-800">Profile Information</h2>
+        <div className="space-y-4">
+          <div className="flex items-center space-x-4">
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+              <User size={32} className="text-blue-600" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800">{username}</h3>
+            </div>
+          </div>
+          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+            <h4 className="font-semibold mb-2 text-gray-700">Account Details</h4>
+            <p className="text-gray-600"><b>Email:</b> {email}</p>
+          </div>
+        </div>
       </div>
     );
   };
 
-  // Contact Us Form
-  const ContactForm = () => {
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [message, setMessage] = useState("");
-    const [status, setStatus] = useState("");
-
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      try {
-        const response = await fetch("http://localhost:5000/api/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, email, message }),
-        });
-        if (response.ok) {
-          setStatus("Message sent successfully!");
-        } else {
-          throw new Error("Failed to send message");
-        }
-      } catch (err) {
-        setStatus("Error sending message.");
-      }
-    };
-
-    return (
-      <form onSubmit={handleSubmit} style={{ padding: "1rem" }}>
-        <div>
-          <label>Name:</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            style={{ width: "94%", marginBottom: "1rem", marginTop: "0.5rem" }}
-          />
-        </div>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{ width: "94%", marginBottom: "1rem", marginTop: "0.5rem" }}
-          />
-        </div>
-        <div>
-          <label>Message:</label>
-          <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            required
-            style={{ width: "98%", height: "100px", marginBottom: "1rem", marginTop: "0.5rem" }}
-          />
-        </div>
-        <button type="submit" style={{ padding: "0.5rem", background: "#007bff", color: "white" }}>
-          Send
-        </button>
-        {status && <p>{status}</p>}
-      </form>
-    );
-  };
-
-  // Get color based on booking status
   const getStatusColor = (status) => {
-    switch (status) {
-      case 'pending':
-        return 'orange';
-      case 'approved_by_admin':
-        
-        return 'green';
-      case 'rejected_by_admin'  :
-        case 'rejected_by_manager':
-        return 'red';
-      default:
-        return 'orange';
-    }
+    const colors = {
+      pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+      approved: 'bg-green-100 text-green-800 border-green-200',
+      rejected: 'bg-red-100 text-red-800 border-red-200'
+    };
+    return colors[status] || 'bg-gray-100 text-gray-800 border-gray-200';
   };
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh" }}>
+    <div className="min-h-screen bg-gray-50">
       {/* Sidebar */}
-      {isSidebarVisible && (
-        <aside
-          style={{
-            width: "100px",
-            background: "#f8f9fa",
-            padding: "1rem",
-            borderRight: "1px solid #ddd",
-            position: "fixed",
-            top: 0,
-            left: 0,
-            bottom: 0,
-            transition: "transform 0.9s ease-in-out",
-            transform: isSidebarVisible ? "translateX(0)" : "translateX(-100%)",
-          }}
-        >
-          <ul style={{ listStyle: "none", padding: 0 }}>
-            <li
-              style={{
-                marginBottom: "1.5rem",
-                marginTop: "2rem",
-                cursor: "pointer",
-                fontWeight: activeTab === "Dashboard" ? "bold" : "normal",
-              }}
-              onClick={() => setActiveTab("Dashboard")}
-            >
-              Home
-            </li>
-            <li
-              style={{
-                marginBottom: "1.5rem",
-                cursor: "pointer",
-                fontWeight: activeTab === "Profile" ? "bold" : "normal",
-              }}
-              onClick={() => setActiveTab("Profile")}
-            >
-              Profile
-            </li>
-            <li
-              style={{
-                marginBottom: "1.5rem",
-                cursor: "pointer",
-                fontWeight: activeTab === "Bookings" ? "bold" : "normal",
-              }}
-              onClick={() => setActiveTab("Bookings")}
-            >
-              Bookings
-            </li>
-            <li
-              style={{
-                cursor: "pointer",
-                fontWeight: activeTab === "Contact" ? "bold" : "normal",
-              }}
-              onClick={() => setActiveTab("Contact")}
-            >
-              Contact Us
-            </li>
-          </ul>
-        </aside>
-      )}
+      <aside
+        className={`fixed top-0 left-0 h-full w-64 bg-white shadow-md transform transition-transform duration-300 ease-in-out z-20 ${
+          isSidebarVisible ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <div className="flex flex-col h-full">
+          <div className="p-5 border-b border-gray-100">
+            <div className="flex items-center space-x-3">
+              <img src="./RVCE logo.jpg" alt="RVCE logo" className="w-10 h-10" />
+              <span className="text-lg font-semibold text-gray-800">RVCE</span>
+            </div>
+          </div>
+          
+          <nav className="flex-1 p-4 space-y-2 text-white">
+            {[
+              { id: "Dashboard", icon: Home },
+              { id: "Profile", icon: User },
+              { id: "Bookings", icon: Calendar }
+            ].map(({ id, icon: Icon }) => (
+              <button
+                key={id}
+                onClick={() => setActiveTab(id)}
+                className={`flex items-center w-full px-4 py-3 rounded-lg transition-all duration-200 ${
+                  activeTab === id 
+                    ? 'bg-blue-50 text-blue-600 font-medium hover:text-white' 
+                    : 'text-white hover:bg-blue-350'
+                }`}
+              >
+                <Icon size={20} className="shrink-0" />
+                <span className="ml-3">{id}</span>
+              </button>
+            ))}
+          </nav>
+        </div>
+      </aside>
 
       {/* Main Content */}
-      <main style={{ flex: 1, padding: "2rem", marginLeft: isSidebarVisible ? "150px" : "0" }}>
-        <nav
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "1rem",
-            borderBottom: "1px solid #ddd",
-            paddingBottom: "0.5rem",
-          }}
-        >
-          <div onClick={toggleSidebar} style={{ cursor: "pointer", display: "flex", alignItems: "center" }}>
-            <span style={{ fontSize: "24px", marginRight: "0.5rem" }}>☰</span>
-            <img src="./RVCE logo.jpg" alt="RVCE logo" style={{ width: "40px", marginLeft: "20px" }} />
-            <span style={{ fontSize: "30px", margin: "4px 0px 0px 10px", fontWeight: "bolder" }}>RVCE USER DASHBOARD</span>
-          </div>
-          <button onClick={handleLogout} style={{ background: "#dc3545", color: "white", width: "100px", padding: "0.5rem 1rem" }}>
-            Logout
-          </button>
-        </nav>
-
-        {/* Conditional Rendering */}
-        {activeTab === "Dashboard" && (
-          <>
-            <h2>Seminar Halls</h2>
-            {loading && <p>Loading seminar halls...</p>}
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
-              {seminarHalls.map((hall) => (
-                <div
-                  key={hall._id}
-                  style={{
-                    border: "1px solid #ccc",
-                    borderRadius: "8px",
-                    padding: "1rem",
-                    width: "200px",
-                    textAlign: "center",
-                  }}
-                >
-                  <img
-                    src={hall.images[0] || "/placeholder.jpg"}
-                    alt={hall.name}
-                    style={{ width: "100%", height: "150px", objectFit: "cover" }}
-                  />
-                  <h3>{hall.name}</h3>
-                  <p>ID: {hall.displayId}</p>
-                  <Link to={`/seminar-hall/${hall._id}`}>
-                    <button style={{ padding: "0.5rem 1rem" }}>View Details</button>
-                  </Link>
-                  <button
-                    onClick={() => {
-                      setSelectedHall(hall);
-                    }}
-                    style={{
-                      padding: "0.5rem 1rem",
-                      background: "#007bff",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                      width: "100%",
-                    }}
-                  >
-                    Book Now
-                  </button>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-
-        {activeTab === "Bookings" && (
-          <div>
-            <h2>My Bookings</h2>
-            {bookings.length === 0 && <p>No bookings found</p>}
-            {bookings.map((booking) => (
-              <div
-                key={booking._id}
-                style={{
-                  padding: "1rem",
-                  marginBottom: "1rem",
-                  border: "1px solid #ccc",
-                  borderRadius: "8px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  backgroundColor: getStatusColor(booking.status),
-                }}
+      <div className={`transition-all duration-300 ${isSidebarVisible ? 'ml-64' : 'ml-0'}`}>
+        {/* Header */}
+        <header className="bg-white border-b border-gray-300">
+          <div className="h-16 px-4 flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <button 
+                onClick={toggleSidebar}
+                className=" bg-white"
               >
-                <div>
-                  <h3>{booking.seminarHallId.name}</h3>
-                  <p>{booking.status}</p>
-                </div>
-                <div>
-                  <p>{new Date(booking.bookingDate).toLocaleDateString()}</p>
-                </div>
+                <Menu size={22} className="text-black" />
+              </button>
+              <div className="flex items-center">
+                <h1 className="text-xl font-semibold text-gray-800 whitespace-nowrap">User Dashboard</h1>
               </div>
-            ))}
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-3 mr-2">
+                <div className="w-8 h-8  rounded-full flex items-center justify-center">
+                  <User size={18} className="text-blue-600" />
+                </div>
+                <span className="text-sm font-medium text-gray-700">John Doe</span>
+              </div>
+              <div className="h-6 w-px bg-gray-200"></div>
+              <button
+                onClick={handleLogout}
+                className="inline-flex items-center space-x-2 px-3 py-2 rounded-lg text-white-700 hover:bg-gray-100 transition-colors"
+              >
+                <LogOut size={18} />
+                <span className="text-sm font-medium">Logout</span>
+              </button>
+            </div>
           </div>
-        )}
+        </header>
 
-        {activeTab === "Profile" && <ProfileBox />}
-        {activeTab === "Contact" && <ContactForm />}
+        {/* Content Area */}
+        <main className="p-6 max-w-[1920px] mx-auto">
+          {activeTab === "Dashboard" && (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-semibold text-gray-800">Seminar Halls</h2>
+              </div>
+              
+              {loading && (
+                <div className="flex justify-center items-center h-64">
+                  <div className="animate-spin rounded-full h-10 w-10 border-3 border-blue-500 border-t-transparent"></div>
+                </div>
+              )}
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
+                {seminarHalls.map((hall) => (
+                  <div 
+                    key={hall._id} 
+                    className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 overflow-hidden"
+                  >
+                    <div className="relative">
+                      <img
+                        src={hall.images[0] || "/placeholder.jpg"}
+                        alt={hall.name}
+                        className="w-full h-48 object-cover"
+                      />
+                      <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-gray-700">
+                        ID: {hall.displayId}
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <h3 className="text-lg font-semibold text-gray-800 mb-4">{hall.name}</h3>
+                      <div className="space-y-2">
+                        <Link
+                          to={`/seminar-hall/${hall._id}`}
+                          className="block w-full text-center px-4 py-2 border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                        >
+                          View Details
+                        </Link>
+                        <button
+                          onClick={() => setSelectedHall(hall)}
+                          className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                          Book Now
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
-        {/* Booking Modal */}
-        {selectedHall && (
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              zIndex: 9999
-            }}
-          >
-            <div
-              style={{
-                background: 'white',
-                padding: '20px',
-                borderRadius: '8px',
-                maxWidth: '600px',
-                width: '90%',
-                maxHeight: '90vh',
-                overflowY: 'auto'
-              }}
-            >
+          {activeTab === "Bookings" && (
+            <div className="space-y-6">
+              <h2 className="text-2xl font-semibold text-gray-800">My Bookings</h2>
+              {bookings.length === 0 ? (
+                <div className="bg-white border border-gray-100 rounded-xl p-8 text-center">
+                  <Calendar className="mx-auto h-12 w-12 text-gray-400" />
+                  <h3 className="mt-4 text-lg font-medium text-gray-800">No bookings found</h3>
+                  <p className="mt-2 text-gray-500">Start by booking a seminar hall from the dashboard.</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {bookings.map((booking) => (
+                    <div
+                      key={booking._id}
+                      className={`bg-white border rounded-xl p-4 hover:shadow-sm transition-all duration-200
+                        ${booking.status === 'approved' ? 'border-green-200 bg-green-50' :
+                          booking.status === 'pending' ? 'border-yellow-200 bg-yellow-50' :
+                          'border-red-200 bg-red-50'}`}
+                    >
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <h3 className="text-lg font-medium text-gray-800">{booking.seminarHallId.name}</h3>
+                          <div className="mt-1 flex items-center space-x-3">
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                              ${booking.status === 'approved' ? 'bg-green-100 text-green-700' : 
+                                booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 
+                                'bg-red-100 text-red-700'}`}>
+                              {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                            </span>
+                            <span className="text-sm text-gray-500">
+                              {new Date(booking.bookingDate).toLocaleDateString()}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === "Profile" && <ProfileBox />}
+        </main>
+      </div>
+
+      {/* Booking Modal */}
+      {selectedHall && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl max-w-3xl w-11/12 max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white px-6 py-4 border-b border-gray-100 rounded-t-xl">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl font-semibold text-gray-800">Book Seminar Hall</h3>
+                <button 
+                  onClick={() => setSelectedHall(null)}
+                  className="p-2 hover:bg-blue-450 rounded-lg transition-colors whitespace-nowrap w-auto"
+                >
+                Close
+                </button>
+              </div>
+            </div>
+            <div className="p-6">
               <BookingTab
                 seminarHall={selectedHall}
                 onClose={() => setSelectedHall(null)}
               />
             </div>
           </div>
-        )}
-      </main>
+        </div>
+      )}
     </div>
   );
 };
