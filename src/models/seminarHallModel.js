@@ -1,11 +1,25 @@
 const mongoose = require("mongoose");
-    
-const seminarHallSchema = new mongoose.Schema({
+
+// Define the Equipment schema for embedded equipment
+const equipmentSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  image: { type: String, required: true },
-  equipment: { type: [String], required: true },
-  capacity: { type: Number, required: true },
-  details: { type: String, required: true },
+  type: { type: String, required: true },
+  condition: { type: String, default: "Good" },
+  available: { type: Boolean, default: true },
+  quantity: { type: Number, default: 1 },
 });
 
-module.exports = mongoose.model("SeminarHall", seminarHallSchema);
+// Define the SeminarHall schema
+const seminarHallSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  displayId: { type: Number, required: true, unique: true },
+  capacity: { type: Number, required: true },
+  details: { type: String },
+  equipment: [equipmentSchema], 
+  images: [{ type: String }]// Embedded array of equipment
+});
+
+// Create the model
+const SeminarHall = mongoose.model("SeminarHall", seminarHallSchema);
+
+module.exports = SeminarHall;

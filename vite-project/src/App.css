@@ -1,0 +1,110 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f0f4f8;
+    color: #333;
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background: #004d80;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .logo img {
+    width: 120px;
+    height: auto;
+  }
+
+  #rvce-img{
+    margin-top: -20px;
+    width: 600px;
+  }
+  
+  .header-text h3 {
+    font-size: 0.9rem;
+    margin: 0.2rem 0;
+    font-weight: 100;
+    
+  }
+
+  .header-text h1 h3 p{
+    color: white;
+  }
+  
+  .header-text p {
+    margin: 0.2rem 0;
+    font-size: 0.8rem;
+  }
+  
+  #acc{
+    margin-top: 14px;
+    font-weight: bold;
+    
+  }
+
+  .since {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  
+  .glass-box1 {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    padding: 3rem 6rem;
+    margin: 2rem auto;
+    max-width: 800px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .glass-box1 h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #004d80;
+  }
+  
+  .glass-box1 p {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 3rem;
+    text-align: justify;
+  }
+  
+  .login-button-container {
+    margin-top: 1rem;
+  }
+  
+  .login-button {
+    background: #004d80;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .login-button:hover {
+    background: #003556;
+  }
+  
+  .footer {
+    background: #004d80;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+  }
+  
