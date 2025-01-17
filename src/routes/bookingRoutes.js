@@ -71,38 +71,47 @@ router.post("/book", async (req, res) => {
 });
 
 // Route for manager to approve booking
-router.post(
-  "/approve/manager",
+router.patch(
+  "/:bookingId/approve/manager",
   verifyToken,
-  authorizeRoles("manager"), // Only manager can access
+  authorizeRoles("manager"), // Only managers can approve
   async (req, res) => {
-    const { bookingId } = req.body;
+    const { bookingId } = req.params;
 
     try {
       const booking = await Booking.findById(bookingId);
 
       if (!booking || booking.status !== "pending") {
-        return res.status(400).json({ message: "Booking is not in pending state or does not exist." });
+        return res.status(400).json({ message: "Booking not found or not in a pending state." });
       }
 
-      // Update the booking status to 'approved_by_manager'
       booking.status = "approved_by_manager";
       await booking.save();
 
-      res.status(200).json({ message: "Booking approved by manager", booking });
+      // Send notification
+      const user = await User.findById(booking.userId);
+      const notification = new Notification({
+        userId: user._id,
+        message: `Your booking for seminar hall "${booking.seminarHallId}" has been approved.`,
+        bookingId,
+      });
+      await notification.save();
+
+      res.status(200).json({ message: "Booking approved", booking });
     } catch (error) {
-      res.status(500).json({ message: "Error approving booking by manager", error });
+      res.status(500).json({ message: "Error approving booking", error });
     }
   }
 );
 
+
 // Route for admin to approve booking
-router.post(
-  "/approve/admin",
+router.patch(
+  "/:bookingId/approve/admin",
   verifyToken,
   authorizeRoles("admin"), // Only admin can access
   async (req, res) => {
-    const { bookingId } = req.body;
+    const { bookingId } = req.params;
 
     try {
       const booking = await Booking.findById(bookingId);
@@ -189,6 +198,22 @@ router.get("/pending/manager", async (req, res) => {
     res.status(500).json({ message: "Error fetching pending bookings for manager", error });
   }
 });
+router.get("/confirmed/manager", async (req, res) => {
+  try {
+    const confirmedBookings = await Booking.find({ status: "approved_by_manager" }).populate("userId seminarHallId");
+    res.status(200).json({ bookings: confirmedBookings });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching pending bookings for manager", error });
+  }
+});
+router.get("/rejected/manager", async (req, res) => {
+  try {
+    const rejectedBookings = await Booking.find({ status: "rejected_by_manager" }).populate("userId seminarHallId");
+    res.status(200).json({ bookings:rejectedBookings });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching pending bookings for manager", error });
+  }
+});
 
 // Route for admin to view all pending bookings
 router.get("/pending/admin", async (req, res) => {
@@ -200,12 +225,37 @@ router.get("/pending/admin", async (req, res) => {
   }
 });
 
+// Route: Get all bookings for a specific user
+router.get('/user', verifyToken, async (req, res) => {
+  try {
+    // Get the user ID from the authenticated token
+    const userId = req.user.id;
+
+    // Fetch bookings for the user with related data (seminarHall, eventCoordinators)
+    const bookings = await Booking.find({ userId })
+      .populate('seminarHallId', 'name location seatingCapacity') // Include specific fields of seminar hall
+      .populate('managerId', 'name email') // Include manager details
+      .populate('adminId', 'name email') // Include admin details
+      .exec();
+
+    // Respond with the bookings
+    res.status(200).json({ bookings });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ message: 'Server error. Could not fetch bookings.' });
+  }
+});
+
+
+
+
 // Route to view booking details
 router.get("/:bookingId", async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.bookingId)
       .populate("seminarHallId") // Populate seminar hall details (if needed)
       .populate("userId"); // Populate user details (if needed)
+      console.log(booking);
 
     if (!booking) {
       return res.status(404).json({ message: "Booking not found" });
@@ -218,48 +268,53 @@ router.get("/:bookingId", async (req, res) => {
 });
 
 // Route for manager to reject booking
-router.post(
-  "/reject/manager",
+router.patch(
+  "/:bookingId/reject/manager",
   verifyToken,
-  authorizeRoles("manager"), // Only manager can access
+  authorizeRoles("manager"), // Only managers can reject
   async (req, res) => {
-    const { bookingId, reason } = req.body;
+    const { bookingId } = req.params;
+    const { reason } = req.body; // Get the rejection reason from the request body
+
+    if (!reason) {
+      return res.status(400).json({ message: "Rejection reason is required." });
+    }
 
     try {
       const booking = await Booking.findById(bookingId);
 
       if (!booking || booking.status !== "pending") {
-        return res.status(400).json({ message: "Booking is not in pending state or does not exist." });
+        return res.status(400).json({ message: "Booking not found or not in a pending state." });
       }
 
-      // Update the booking status to 'rejected_by_manager' and include reason
       booking.status = "rejected_by_manager";
-      booking.rejectionReason = reason;
+      booking.rejectionReason = reason; // Save the rejection reason
       await booking.save();
 
-      // Notify the user
+      // Send notification
       const user = await User.findById(booking.userId);
-      const userNotification = new Notification({
+      const notification = new Notification({
         userId: user._id,
-        message: `Your booking for seminar hall "${booking.seminarHallId}" has been rejected by the manager. Reason: ${reason}`,
-        bookingId: booking._id,
+        message: `Your booking for seminar hall "${booking.seminarHallId}" has been rejected. Reason: ${reason}`,
+        bookingId,
       });
-      await userNotification.save();
+      await notification.save();
 
-      res.status(200).json({ message: "Booking rejected by manager", booking });
+      res.status(200).json({ message: "Booking rejected with reason", booking });
     } catch (error) {
-      res.status(500).json({ message: "Error rejecting booking by manager", error });
+      res.status(500).json({ message: "Error rejecting booking", error });
     }
   }
 );
 
 // Route for admin to reject booking
-router.post(
-  "/reject/admin",
+router.patch(
+  "/:bookingId/reject/admin",
   verifyToken,
   authorizeRoles("admin"), // Only admin can access
   async (req, res) => {
-    const { bookingId, reason } = req.body;
+    const { bookingId } = req.params;
+    const { reason }=req.body;
 
     try {
       const booking = await Booking.findById(bookingId);

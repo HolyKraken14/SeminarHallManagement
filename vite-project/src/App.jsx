@@ -8,7 +8,8 @@ import ManagerDashboard from "./components/ManagerDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SeminarHallDetails from "./components/SeminarHallDetails";
 import BookingTab from "./components/BookingTab";
-import BookingDetails from "./components/BookingDetails"
+import BookingDetailsManager from "./components/BookingDetailsManager"
+import BookingDetailsAdmin from "./components/BookingDetailsAdmin"
 import "./App.css"; // Import CSS for styling
 
 const App = () => {
@@ -107,7 +108,8 @@ const App = () => {
         />
         <Route path="/seminar-hall/:id" element={<SeminarHallDetails />} />
         <Route path="/book/:seminarHallId" element={<BookingTab />} />
-        <Route path="/booking-details/:bookingId" element={<BookingDetails />} />
+        <Route path="/booking-details/:bookingId/manager" element={<BookingDetailsManager />} />
+        <Route path="/booking-details/:bookingId/admin" element={<BookingDetailsAdmin />} />
         
 
 

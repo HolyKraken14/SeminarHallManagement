@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import BookingTab from './BookingTab';
 
 const Dashboard = () => {
   const [seminarHalls, setSeminarHalls] = useState([]);
-  const [bookings, setBookings] = useState([]); // New state for bookings
+  const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("Dashboard");
+  const [selectedBooking, setSelectedBooking] = useState(null); // New state for selected booking
   const [isSidebarVisible, setIsSidebarVisible] = useState(false);
-  const [selectedHall, setSelectedHall] = useState(null);
   const navigate = useNavigate();
 
   // Fetch seminar halls from backend
@@ -32,11 +31,11 @@ const Dashboard = () => {
     fetchSeminarHalls();
   }, []);
 
-  // Fetch user bookings from backend
+  // Fetch bookings from backend
   useEffect(() => {
     const fetchBookings = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/bookings/user", {
+        const response = await fetch("http://localhost:5000/api/bookings/pending/admin", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           }
@@ -55,40 +54,10 @@ const Dashboard = () => {
   }, []);
 
   // Handle Approve/Reject Action
-  const handleBookingStatusChange = async (bookingId, status) => {
-    try {
-      const response = await fetch(`http://localhost:5000/api/bookings/${bookingId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ status }),
-      });
+  
 
-      if (!response.ok) {
-        throw new Error("Failed to update booking status");
-      }
-
-      const updatedBooking = await response.json();
-      setBookings((prevBookings) =>
-        prevBookings.map((booking) =>
-          booking._id === updatedBooking._id ? updatedBooking : booking
-        )
-      );
-
-      // Notify user or admin
-      if (status === "approved") {
-        // Notify admin (you can implement a notification system or simply log)
-        alert("Booking approved. Notification sent to admin.");
-      } else if (status === "rejected") {
-        // Notify user
-        alert("Booking rejected. User notified.");
-      }
-    } catch (err) {
-      setError(err.message);
-    }
-  };
+  // Set the selected booking and open the detailed view
+  
 
   // Logout function
   const handleLogout = () => {
@@ -111,70 +80,6 @@ const Dashboard = () => {
         <p><strong>Username:</strong> {username}</p>
         <p><strong>Email:</strong> {email}</p>
       </div>
-    );
-  };
-
-  // Contact Us Form
-  const ContactForm = () => {
-    const [name, setName] = useState("");
-    const [email, setEmail] = useState("");
-    const [message, setMessage] = useState("");
-    const [status, setStatus] = useState("");
-
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      try {
-        const response = await fetch("http://localhost:5000/api/contact", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, email, message }),
-        });
-        if (response.ok) {
-          setStatus("Message sent successfully!");
-        } else {
-          throw new Error("Failed to send message");
-        }
-      } catch (err) {
-        setStatus("Error sending message.");
-      }
-    };
-
-    return (
-      <form onSubmit={handleSubmit} style={{ padding: "1rem" }}>
-        <div>
-          <label>Name:</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            style={{ width: "94%", marginBottom: "1rem", marginTop: "0.5rem" }}
-          />
-        </div>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{ width: "94%", marginBottom: "1rem", marginTop: "0.5rem" }}
-          />
-        </div>
-        <div>
-          <label>Message:</label>
-          <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            required
-            style={{ width: "98%", height: "100px", marginBottom: "1rem", marginTop: "0.5rem" }}
-          />
-        </div>
-        <button type="submit" style={{ padding: "0.5rem", background: "#007bff", color: "white" }}>
-          Send
-        </button>
-        {status && <p>{status}</p>}
-      </form>
     );
   };
 
@@ -326,6 +231,7 @@ const Dashboard = () => {
                   alignItems: "center",
                   backgroundColor: getStatusColor(booking.status),
                 }}
+                 // Handle click to open booking details
               >
                 <div>
                   <h3>{booking.seminarHallId.name}</h3>
@@ -333,23 +239,19 @@ const Dashboard = () => {
                 </div>
                 <div>
                   <p>{new Date(booking.bookingDate).toLocaleDateString()}</p>
+                  
                 </div>
-                <div>
-                  {booking.status === "pending" && (
-                    <>
-                      <button onClick={() => handleBookingStatusChange(booking._id, "approved")} style={{ marginRight: "0.5rem" }}>
-                        Approve
-                      </button>
-                      <button onClick={() => handleBookingStatusChange(booking._id, "rejected")}>
-                        Reject
-                      </button>
-                    </>
-                  )}
-                </div>
+                <Link to={`/booking-details/${booking._id}/admin`}>
+                                    <button style={{ padding: "0.5rem 1rem" }}>View Details</button>
+                                  </Link>
               </div>
             ))}
           </div>
         )}
+        {error && <p style={{ color: "red" }}>{error}</p>}
+
+
+        
 
         {activeTab === "Profile" && <ProfileBox />}
         {activeTab === "Contact" && <ContactForm />}

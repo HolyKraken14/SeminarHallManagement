@@ -148,10 +148,14 @@ const Dashboard = () => {
     switch (status) {
       case 'pending':
         return 'orange';
-      case 'approved':
+      case 'approved_by_admin':
+        
         return 'green';
-      default:
+      case 'rejected_by_admin'  :
+        case 'rejected_by_manager':
         return 'red';
+      default:
+        return 'orange';
     }
   };
 

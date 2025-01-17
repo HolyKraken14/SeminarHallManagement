@@ -52,62 +52,12 @@ const Dashboard = () => {
 
     fetchBookings();
   }, []);
+  
 
   // Handle Approve/Reject Action
-  const handleBookingStatusChange = async (bookingId, status) => {
-    try {
-      const response = await fetch(`http://localhost:5000/api/bookings/${bookingId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ status }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to update booking status");
-      }
-
-      const updatedBooking = await response.json();
-      setBookings((prevBookings) =>
-        prevBookings.map((booking) =>
-          booking._id === updatedBooking._id ? updatedBooking : booking
-        )
-      );
-
-      // Notify user or admin
-      if (status === "approved") {
-        alert("Booking approved. Notification sent to admin.");
-      } else if (status === "rejected") {
-        alert("Booking rejected. User notified.");
-      }
-    } catch (err) {
-      setError(err.message);
-    }
-  };
+  
 
   // Set the selected booking and open the detailed view
-  const handleBookingClick = async (bookingId) => {
-    console.log("Fetching details for booking with ID:", bookingId); // Log the booking ID
-    try {
-      const response = await fetch(`http://localhost:5000/api/bookings/${bookingId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error(`Failed to fetch booking details with status code ${response.status}`);
-      }
-      const bookingDetails = await response.json();
-      console.log("Fetched booking details:", bookingDetails);
-      setSelectedBooking(bookingDetails); // Store selected booking in state
-      setActiveTab("BookingDetails"); // Switch to booking details tab
-    } catch (err) {
-      console.error("Error fetching booking details:", err);
-      setError(err.message);
-    }
-  };
   
 
   // Logout function
@@ -292,7 +242,7 @@ const Dashboard = () => {
                   <p>{new Date(booking.bookingDate).toLocaleDateString()}</p>
                   
                 </div>
-                <Link to={`/booking-details/${booking._id}`}>
+                <Link to={`/booking-details/${booking._id}/manager`}>
                                     <button style={{ padding: "0.5rem 1rem" }}>View Details</button>
                                   </Link>
               </div>
