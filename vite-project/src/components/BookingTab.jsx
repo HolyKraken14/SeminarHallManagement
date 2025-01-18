@@ -92,12 +92,6 @@ const BookingTab = ({ seminarHall, onClose }) => {
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">Book {seminarHall.name}</h2>
-          <button 
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            ✕
-          </button>
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -190,7 +184,7 @@ const BookingTab = ({ seminarHall, onClose }) => {
             <button
               type="button"
               onClick={handleAddCoordinator}
-              className="text-blue-600 hover:text-blue-800"
+              className="text-white-600 hover:text-white-600"
             >
               + Add Another Coordinator
             </button>
@@ -202,7 +196,7 @@ const BookingTab = ({ seminarHall, onClose }) => {
             className={`w-full p-3 rounded text-white ${
               isSubmitting 
                 ? 'bg-blue-400 cursor-not-allowed' 
-                : 'bg-blue-600 hover:bg-blue-700'
+                : 'bg-blue-550 hover:bg-blue-700'
             }`}
           >
             {isSubmitting ? 'Submitting...' : 'Submit Booking Request'}
