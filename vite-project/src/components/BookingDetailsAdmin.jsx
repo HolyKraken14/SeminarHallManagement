@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { AlertCircle, CheckCircle, Clock, User, Calendar, Clock3, ArrowLeft } from "lucide-react";
 
 const BookingDetails = () => {
   const { bookingId } = useParams();
@@ -93,17 +94,23 @@ const BookingDetails = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: "20px", textAlign: "center" }}>
-        <p>Loading booking details...</p>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div style={{ padding: "20px", textAlign: "center", color: "red" }}>
-        <p>{error}</p>
-        <button onClick={() => navigate(-1)} style={{ marginTop: "10px" }}>
+      <div className="p-6">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center text-red-800">
+          <AlertCircle className="h-5 w-5 mr-2" />
+          <p>{error}</p>
+        </div>
+        <button
+          onClick={() => navigate(-1)}
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
           Go Back
         </button>
       </div>
@@ -112,154 +119,199 @@ const BookingDetails = () => {
 
   if (!bookingDetails) {
     return (
-      <div style={{ padding: "20px", textAlign: "center" }}>
-        <p>No booking details found</p>
-        <button onClick={() => navigate(-1)} style={{ marginTop: "10px" }}>
+      <div className="p-6">
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-center text-yellow-800">
+          <AlertCircle className="h-5 w-5 mr-2" />
+          <p>No booking details found</p>
+        </div>
+        <button
+          onClick={() => navigate(-1)}
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
           Go Back
         </button>
       </div>
     );
   }
 
+  const getStatusBadge = (status) => {
+    const styles = {
+      approved_by_admin: "bg-green-500 text-white",
+      rejected_by_admin: "bg-red-500 text-white",
+      approved_by_manager: "bg-yellow-500 text-white",
+    };
+
+    const icons = {
+      approved_by_admin: <CheckCircle className="w-4 h-4 mr-1" />,
+      rejected_by_admin: <AlertCircle className="w-4 h-4 mr-1" />,
+      approved_by_manager: <Clock className="w-4 h-4 mr-1" />,
+    };
+
+    return (
+      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${styles[status]}`}>
+        {icons[status]}
+        {status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+      </span>
+    );
+  };
+
   return (
-    <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
-      <h2>Booking Details</h2>
-      <div
-        style={{
-          backgroundColor: "#f5f5f5",
-          padding: "20px",
-          borderRadius: "8px",
-          marginTop: "20px",
-        }}
-      >
-        <p><strong>Event Name:</strong> {bookingDetails.eventName}</p>
-        <p><strong>Event Details:</strong> {bookingDetails.eventDetails}</p>
-        <p><strong>Booking Date:</strong> {new Date(bookingDetails.bookingDate).toLocaleDateString()}</p>
-        <p><strong>Time:</strong> {bookingDetails.startTime} - {bookingDetails.endTime}</p>
-        <p>
-          <strong>Status:</strong>{" "}
-          <span
-            style={{
-              color:
-                bookingDetails.status === "approved_by_admin"
-                  ? "green"
-                  : bookingDetails.status === "rejected_by_admin"
-                  ? "red"
-                  : "orange",
-            }}
-          >
-            {bookingDetails.status}
-          </span>
-        </p>
-        <p><strong>Seminar Hall:</strong> {bookingDetails.seminarHallId?.name || "N/A"}</p>
-        
- <h3 style={{ marginTop: '20px' }}>Event Coordinators</h3>
-        {bookingDetails.eventCoordinators?.length > 0 ? (
-          <ul style={{ listStyle: 'none', padding: 0 }}>
-            {bookingDetails.eventCoordinators.map((coordinator, index) => (
-              <li key={index} style={{ marginBottom: '10px' }}>
-                <p><strong>Name:</strong> {coordinator.name}</p>
-                <p><strong>Email:</strong> {coordinator.email}</p>
-                <p><strong>Contact:</strong> {coordinator.contact}</p>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No coordinators specified.</p>
-        )}
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        {/* Back button */}
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center bg-gray-50 text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+        >
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Back
+        </button>
 
-        <h3 style={{ marginTop: '20px' }}>User Details</h3>
-        <p><strong>User Name:</strong> {bookingDetails.userId?.username || 'N/A'}</p>
-        <p><strong>User Email:</strong> {bookingDetails.userId?.email || 'N/A'}</p>
+        {/* Header */}
+        <div className="bg-gray-50 border-b border-gray-200 px-6 py-4">
+          <h1 className="text-2xl font-bold text-gray-900">Booking Details</h1>
+        </div>
 
-        {bookingDetails.status === "approved_by_manager" && (
-          <div style={{ marginTop: "20px" }}>
-            <button
-              onClick={handleApprove}
-              style={{
-                marginRight: "10px",
-                padding: "10px 20px",
-                backgroundColor: "green",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
-            >
-              Approve
-            </button>
-            <button
-              onClick={() => setIsRejecting(true)}
-              style={{
-                padding: "10px 20px",
-                backgroundColor: "red",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
-            >
-              Reject
-            </button>
+        {/* Content */}
+        <div className="p-6 space-y-6">
+          {/* Event Information Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Event Information</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center text-gray-600">
+                    <Calendar className="w-4 h-4 mr-2 text-blue-600" />
+                    <span className="font-medium mr-2">Event Name:</span>
+                    <span>{bookingDetails.eventName}</span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <Clock3 className="w-4 h-4 mr-2 text-blue-600" />
+                    <span className="font-medium mr-2">Date:</span>
+                    <span>{new Date(bookingDetails.bookingDate).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <Clock3 className="w-4 h-4 mr-2 text-blue-600" />
+                    <span className="font-medium mr-2">Time:</span>
+                    <span>{bookingDetails.startTime} - {bookingDetails.endTime}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Status</h3>
+                {getStatusBadge(bookingDetails.status)}
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Venue</h3>
+                <p className="text-gray-600">{bookingDetails.seminarHallId?.name || "N/A"}</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Event Details</h3>
+                <p className="text-gray-600">{bookingDetails.eventDetails}</p>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">User Details</h3>
+                <div className="space-y-2">
+                  <div className="flex items-center text-gray-600">
+                    <User className="w-4 h-4 mr-2 text-blue-600" />
+                    <span className="font-medium mr-2">Name:</span>
+                    <span>{bookingDetails.userId?.username || "N/A"}</span>
+                  </div>
+                  <div className="flex items-center text-gray-600">
+                    <User className="w-4 h-4 mr-2 text-blue-600" />
+                    <span className="font-medium mr-2">Email:</span>
+                    <span>{bookingDetails.userId?.email || "N/A"}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        )}
 
-        {isRejecting && (
-          <div style={{ marginTop: "20px" }}>
-            <textarea
-              value={rejectionReason}
-              onChange={(e) => setRejectionReason(e.target.value)}
-              placeholder="Enter reason for rejection"
-              style={{ width: "100%", height: "80px", marginBottom: "10px" }}
-            />
-            <button
-              onClick={handleReject}
-              style={{
-                marginRight: "10px",
-                padding: "10px 20px",
-                backgroundColor: "red",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
-            >
-              Submit Rejection
-            </button>
-            <button
-              onClick={() => {
-                setIsRejecting(false);
-                setRejectionReason("");
-              }}
-              style={{
-                padding: "10px 20px",
-                backgroundColor: "#ccc",
-                color: "black",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
-            >
-              Cancel
-            </button>
+          {/* Event Coordinators Section */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Event Coordinators</h3>
+            {bookingDetails.eventCoordinators?.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {bookingDetails.eventCoordinators.map((coordinator, index) => (
+                  <div key={index} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <div className="space-y-2">
+                      <div className="flex items-center text-gray-600">
+                        <User className="w-4 h-4 mr-2 text-blue-600" />
+                        <span className="font-medium mr-2">Name:</span>
+                        <span>{coordinator.name}</span>
+                      </div>
+                      <p className="text-gray-600">
+                        <span className="font-medium mr-2">Email:</span>
+                        {coordinator.email}
+                      </p>
+                      <p className="text-gray-600">
+                        <span className="font-medium mr-2">Contact:</span>
+                        {coordinator.contact}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500">No coordinators specified.</p>
+            )}
           </div>
-        )}
+        </div>
+
+        {/* Footer Actions */}
+        <div className="border-t border-gray-200 px-6 py-4 bg-gray-50 space-y-4">
+          {bookingDetails.status === "approved_by_manager" && (
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={handleApprove}
+                className="w-full sm:w-1/2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              >
+                Approve
+              </button>
+              <button
+                onClick={() => setIsRejecting(true)}
+                className="w-full sm:w-1/2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Reject
+              </button>
+            </div>
+          )}
+
+          {isRejecting && (
+            <div className="space-y-4">
+              <textarea
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+                placeholder="Enter reason for rejection"
+                className="w-full min-h-[100px] p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              />
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button
+                  onClick={handleReject}
+                  className="w-full sm:w-1/2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  Submit Rejection
+                </button>
+                <button
+                  onClick={() => {
+                    setIsRejecting(false);
+                    setRejectionReason("");
+                  }}
+                  className="w-full sm:w-1/2 px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-
-      <button
-        onClick={() => navigate(-1)}
-        style={{
-          marginTop: "20px",
-          padding: "10px 20px",
-          backgroundColor: "#007bff",
-          color: "white",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-        }}
-      >
-        Go Back
-      </button>
     </div>
   );
 };
