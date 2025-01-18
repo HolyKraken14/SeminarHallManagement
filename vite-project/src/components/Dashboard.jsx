@@ -182,7 +182,7 @@ const Dashboard = () => {
                 {seminarHalls.map((hall) => (
                   <div 
                     key={hall._id} 
-                    className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 overflow-hidden"
+                    className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-250 overflow-hidden"
                   >
                     <div className="relative">
                       <img
