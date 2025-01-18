@@ -224,7 +224,7 @@ const Dashboard = () => {
             <div className="flex items-center space-x-4">
               <button 
                 onClick={toggleSidebar}
-                className=" bg-white"
+                className=" bg-white  hover:bg-white"
               >
                 <Menu size={22} className="text-black" />
               </button>
@@ -243,7 +243,7 @@ const Dashboard = () => {
               <div className="h-6 w-px bg-gray-200"></div>
               <button
                 onClick={handleLogout}
-                className="inline-flex items-center space-x-2 px-3 py-2 rounded-lg text-white-700 hover:bg-gray-100 transition-colors"
+                className="inline-flex items-center space-x-2 px-3 py-2 rounded-lg text-white-700 hover:bg-blue-700 transition-colors"
               >
                 <LogOut size={18} />
                 <span className="text-sm font-medium">Logout</span>
@@ -270,7 +270,7 @@ const Dashboard = () => {
                 {seminarHalls.map((hall) => (
                   <div 
                     key={hall._id} 
-                    className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100 overflow-hidden"
+                    className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 border border-gray-250 overflow-hidden"
                   >
                     <div className="relative">
                       <img
