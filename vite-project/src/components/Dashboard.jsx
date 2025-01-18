@@ -4,8 +4,85 @@ import { Menu, Home, User, Calendar, Mail, LogOut } from "lucide-react";
 import BookingTab from './BookingTab';
 
 const Dashboard = () => {
+  const ProfileSection = ({ user, loading, error }) => {
+    if (loading) {
+      return (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-10 w-10 border-3 border-blue-500 border-t-transparent"></div>
+        </div>
+      );
+    }
+  
+    if (error) {
+      return (
+        <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-lg">
+          <p>{error}</p>
+        </div>
+      );
+    }
+  
+    return (
+      <div className="space-y-6">
+        <h2 className="text-2xl font-semibold text-gray-800">My Profile</h2>
+        
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="p-6">
+            <div className="flex items-center space-x-4 mb-6">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                <User size={32} className="text-blue-600" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold text-gray-800">{user.username || 'N/A'}</h3>
+                <p className="text-gray-600">{user.role || 'User'}</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="text-sm font-medium text-gray-500 mb-1">Email Address</h4>
+                  <p className="text-gray-800">{user.email || 'N/A'}</p>
+                </div>
+                
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="text-sm font-medium text-gray-500 mb-1">Username</h4>
+                  <p className="text-gray-800">{user.username || 'N/A'}</p>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="text-sm font-medium text-gray-500 mb-1">Role</h4>
+                  <p className="text-gray-800">{user.role || 'User'}</p>
+                </div>
+                
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <h4 className="text-sm font-medium text-gray-500 mb-1">Joined On</h4>
+                  <p className="text-gray-800">
+                    {user.createdAt 
+                      ? new Date(user.createdAt).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })
+                      : 'N/A'
+                    }
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Recent Activity Section */}
+        
+      </div>
+    );
+  };
   const [seminarHalls, setSeminarHalls] = useState([]);
   const [bookings, setBookings] = useState([]);
+  const [user, setUser] = useState({ username: "", email: "" });
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState("Dashboard");
@@ -46,6 +123,40 @@ const Dashboard = () => {
     fetchBookings();
   }, []);
 
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      setLoading(true);
+      try {
+        const userId = localStorage.getItem('userId');
+        console.log("Attempting to fetch user with ID:", userId);
+        
+        const response = await fetch(`http://localhost:5000/api/users/user/${userId}`, {
+          headers: { 
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          },
+        });
+        
+        if (!response.ok) throw new Error('Failed to fetch user information');
+        
+        const data = await response.json();
+        console.log("Received user data:", data);
+        
+        // The response has userDetails property, so use that directly
+        setUser(data.userDetails);
+        
+      } catch (err) {
+        console.error('Error fetching user info:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchUserInfo();  // Remove the activeTab condition since we want to fetch user data on component mount
+  }, []); // Remove activeTab from dependency array
+
+
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login");
@@ -55,30 +166,7 @@ const Dashboard = () => {
     setIsSidebarVisible(prev => !prev);
   };
 
-  const ProfileBox = () => {
-    const username = "John Doe";
-    const email = "johndoe@rvce.edu.in";
-
-    return (
-      <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl mx-auto">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Profile Information</h2>
-        <div className="space-y-4">
-          <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-              <User size={32} className="text-blue-600" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800">{username}</h3>
-            </div>
-          </div>
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <h4 className="font-semibold mb-2 text-gray-700">Account Details</h4>
-            <p className="text-gray-600"><b>Email:</b> {email}</p>
-          </div>
-        </div>
-      </div>
-    );
-  };
+  
 
   const getStatusColor = (status) => {
     const colors = {
@@ -150,7 +238,7 @@ const Dashboard = () => {
                 <div className="w-8 h-8  rounded-full flex items-center justify-center">
                   <User size={18} className="text-blue-600" />
                 </div>
-                <span className="text-sm font-medium text-gray-700">John Doe</span>
+                <span className="text-sm font-medium text-gray-700"></span>
               </div>
               <div className="h-6 w-px bg-gray-200"></div>
               <button
@@ -241,7 +329,7 @@ const Dashboard = () => {
                           <h3 className="text-lg font-medium text-gray-800">{booking.seminarHallId.name}</h3>
                           <div className="mt-1 flex items-center space-x-3">
                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                              ${booking.status === 'approved' ? 'bg-green-100 text-green-700' : 
+                              ${booking.status === 'approved_by_admin' ? 'bg-green-100 text-green-700' : 
                                 booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 
                                 'bg-red-100 text-red-700'}`}>
                               {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
@@ -259,7 +347,15 @@ const Dashboard = () => {
             </div>
           )}
 
-          {activeTab === "Profile" && <ProfileBox />}
+{activeTab === "Profile" && (
+          <ProfileSection 
+            user={user}
+            loading={loading}
+            error={error}
+            bookings={bookings}
+            
+          />
+        )}
         </main>
       </div>
 
