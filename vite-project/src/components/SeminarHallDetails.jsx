@@ -76,8 +76,8 @@ const SeminarHallDetails = () => {
         </div>
 
         {/* Image Carousel Section */}
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-8">
-          <div className="p-6">
+        <div className="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+          <div className="p-10">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">Gallery</h2>
             <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
               <Carousel images={hall.images || []} />
@@ -87,7 +87,7 @@ const SeminarHallDetails = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Hall Information Section */}
-          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+          <div className="bg-white rounded-xl shadow-md overflow-hidden">
             <div className="p-6">
               <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
                 <Info className="w-5 h-5 mr-2 text-blue-600" />
@@ -113,7 +113,7 @@ const SeminarHallDetails = () => {
           </div>
 
           {/* Equipment Section */}
-          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+          <div className="bg-white rounded-xl shadow-md overflow-hidden">
             <div className="p-6">
               <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
                 <Cpu className="w-5 h-5 mr-2 text-blue-600" />

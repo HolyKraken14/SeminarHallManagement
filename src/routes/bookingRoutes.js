@@ -4,6 +4,7 @@ const SeminarHall = require("../models/seminarHallModel");
 const Booking = require("../models/bookingModel");
 const User = require("../models/userModel");
 const Notification = require("../models/notificationModel");
+const sendEmail = require("../models/sendEmail"); // Import the sendEmail function
 const verifyToken = require("../middlewares/authMiddleware");
 const authorizeRoles = require("../middlewares/rolemiddleware");
 
@@ -106,10 +107,12 @@ router.patch(
 
 
 // Route for admin to approve booking
+
+// In the admin approval route, update the email sending logic:
 router.patch(
   "/:bookingId/approve/admin",
   verifyToken,
-  authorizeRoles("admin"), // Only admin can access
+  authorizeRoles("admin"),
   async (req, res) => {
     const { bookingId } = req.params;
 
@@ -122,12 +125,59 @@ router.patch(
 
       // Update the booking status to 'approved_by_admin'
       booking.status = "approved_by_admin";
+
+      // Get the user's email from the booking
+      const user = await User.findById(booking.userId);
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      let coordinatorName = "Event Coordinator";
+      // Get the user's email from the booking's eventCoordinators
+      if (booking.eventCoordinators && booking.eventCoordinators.length > 0) {
+        coordinatorName = booking.eventCoordinators[0].name || "Event Coordinator";
+        coordinatorEmail = booking.eventCoordinators[0].email;
+      }
+
+      if (!coordinatorEmail) {
+        console.warn(`No coordinator email found for booking ${bookingId}. Using user's email as fallback.`);
+        coordinatorEmail = user.email;  // Fallback to user's email if no coordinator email is found
+      }
+
+      if (!coordinatorEmail) {
+        throw new Error("No valid email found for sending approval notification");
+      }
+
+      // Prepare email content
+      const emailContent = {
+        to: coordinatorEmail,
+        subject: "Seminar Hall Booking Approved",
+        text: `Dear ${coordinatorName},
+
+Your booking for the seminar hall has been approved.
+Booking Details:
+- Event: ${booking.eventName}
+- Date: ${new Date(booking.bookingDate).toLocaleDateString()}
+- Time: ${booking.startTime} - ${booking.endTime}
+
+Thank you.`
+      };
+
+      // Send email
+      try {
+        await sendEmail(emailContent);
+        console.log("Approval email sent successfully");
+      } catch (emailError) {
+        console.error("Failed to send approval email:", emailError);
+        // Continue with the booking process even if email fails
+      }
+
+      // Save the booking after status update
       await booking.save();
 
-      // Send notification to manager and user
+      // Send notifications (existing notification logic)
       const manager = await User.findOne({ role: "manager" });
-      const user = await User.findById(booking.userId);
-
+      
       const managerNotification = new Notification({
         userId: manager._id,
         message: `Booking for seminar hall "${booking.seminarHallId}" has been approved by admin.`,
@@ -140,12 +190,21 @@ router.patch(
         bookingId: booking._id,
       });
 
-      await managerNotification.save();
-      await userNotification.save();
+      await Promise.all([
+        managerNotification.save(),
+        userNotification.save()
+      ]);
 
-      res.status(200).json({ message: "Booking approved by admin", booking });
+      res.status(200).json({ 
+        message: "Booking approved by admin and email sent",
+        booking 
+      });
     } catch (error) {
-      res.status(500).json({ message: "Error approving booking by admin", error });
+      console.error("Error in admin approval route:", error);
+      res.status(500).json({ 
+        message: "Error approving booking by admin", 
+        error: error.message 
+      });
     }
   }
 );
@@ -163,6 +222,23 @@ router.post("/confirm", async (req, res) => {
 
     // Update the status to 'booked'
     booking.status = "booked";
+    
+
+    // Send email to the user
+    const emailContent = {
+      to: "vrushabhbhatt9123@gmail.com",
+      subject: "Seminar Hall Booking Confirmed",
+      text: `Dear user,\n\nYour booking for the seminar hall has been confirmed. Enjoy your event!\n\nThank you.`,
+    };
+
+    try {
+      await sendEmail(emailContent);
+      console.log("Email sent successfully");
+    } catch (emailError) {
+      console.error("Failed to send email:", emailError);
+      // Continue with the booking process even if email fails
+    }
+
     await booking.save();
 
     // Send notification to the manager
@@ -185,7 +261,8 @@ router.post("/confirm", async (req, res) => {
 
     res.status(200).json({ message: "Booking confirmed", booking });
   } catch (error) {
-    res.status(500).json({ message: "Error confirming booking", error });
+    console.error("Error in booking confirmation route:", error);
+    res.status(500).json({ message: "Error confirming booking", error: error.message });
   }
 });
 
@@ -355,3 +432,4 @@ router.patch(
 );
 
 module.exports = router;
+
