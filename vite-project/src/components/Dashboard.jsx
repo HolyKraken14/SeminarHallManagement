@@ -234,11 +234,11 @@ const Dashboard = () => {
             </div>
             
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3 mr-2">
+              <div className="flex items-center space-x-1 mr-2">
                 <div className="w-8 h-8  rounded-full flex items-center justify-center">
                   <User size={18} className="text-blue-600" />
                 </div>
-                <span className="text-sm font-medium text-gray-700"></span>
+                <span className="text-sm font-medium text-gray-700">{user.username}</span>
               </div>
               <div className="h-6 w-px bg-gray-200"></div>
               <button

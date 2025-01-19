@@ -55,8 +55,8 @@ const Dashboard = () => {
   };
 
   const ProfileBox = () => {
-    const username = "John Doe";
-    const email = "johndoe@rvce.edu.in";
+    const username = "Admin";
+    const email = "admin@rvce.edu.in";
 
     return (
       <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl mx-auto">
@@ -181,7 +181,7 @@ const Dashboard = () => {
                 <div className="w-8 h-8  rounded-full flex items-center justify-center">
                   <User size={18} className="text-blue-600" />
                 </div>
-                <span className="text-sm font-medium text-gray-700">John Doe</span>
+                <span className="text-sm font-medium text-gray-700">Admin</span>
               </div>
               <div className="h-6 w-px bg-gray-200"></div>
               <button
