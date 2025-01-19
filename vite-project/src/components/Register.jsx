@@ -125,11 +125,11 @@ const Register = () => {
             {/* Register Button */}
             <button
               type="submit"
-              className="w-full flex justify-center py-3 px-4 border border-transparent 
-                rounded-lg shadow-sm text-sm font-medium text-white bg-blue-600 
-                hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 
-                focus:ring-blue-500 transform transition-all duration-200 ease-in-out 
-                hover:scale-[1.02]"
+              className="items-center space-x-2 px-4 py-3 rounded-xl 
+              bg-gradient-to-r from-indigo-600 to-indigo-700 text-white-700 
+              hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl0
+              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
+              transform transition-all duration-200 ease-in-out hover:scale-[1.02]"
             >
               Create Account
             </button>
@@ -140,8 +140,11 @@ const Register = () => {
                 Already have an account?{" "}
                 <button
                   onClick={() => navigate("/login")}
-                  className="font-medium text-white-600 hover:text-white-500 
-                    transition-colors duration-200"
+                  className="items-center space-x-2 px-4 py-3 rounded-xl 
+                  bg-gradient-to-r from-indigo-600 to-indigo-700 text-white-700 
+                  hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl0
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
+                  transform transition-all duration-200 ease-in-out hover:scale-[1.02]"
                 >
                   Sign in here
                 </button>

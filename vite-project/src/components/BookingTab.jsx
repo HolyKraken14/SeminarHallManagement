@@ -154,7 +154,7 @@ const BookingTab = ({ seminarHall, onClose }) => {
           <div>
             <label className="block mb-2">Event Coordinators:</label>
             {eventCoordinators.map((coordinator, index) => (
-              <div key={index} className="grid grid-cols-2 gap-4 mb-4">
+              <div key={index} className="grid grid-cols-1 gap-4 mb-4">
                 <input
                   type="text"
                   placeholder="Name"
@@ -184,7 +184,9 @@ const BookingTab = ({ seminarHall, onClose }) => {
             <button
               type="button"
               onClick={handleAddCoordinator}
-              className="text-white-600 hover:text-white-600"
+              className="items-center space-x-2 px-4 py-2 rounded-xl 
+              bg-gradient-to-r from-indigo-600 to-indigo-700 text-white-700 
+              hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
             >
               + Add Another Coordinator
             </button>
@@ -193,7 +195,9 @@ const BookingTab = ({ seminarHall, onClose }) => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`w-full p-3 rounded text-white ${
+            className={`items-center space-x-2 px-4 py-2 rounded-xl 
+            bg-gradient-to-r from-indigo-600 to-indigo-700 text-white-700 
+            hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl ${
               isSubmitting 
                 ? 'bg-blue-400 cursor-not-allowed' 
                 : 'bg-blue-550 hover:bg-blue-700'

@@ -113,7 +113,9 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full flex justify-center py-3 px-4 rounded-lg text-white text-sm font-semibold
+              className={`items-center space-x-2 px-4 py-3 rounded-xl 
+                bg-gradient-to-r from-indigo-600 to-indigo-700 text-white-700 
+                hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl0
                 ${
                   loading
                     ? "bg-blue-400 cursor-not-allowed"

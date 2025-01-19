@@ -391,6 +391,15 @@ router.patch(
   }
 );
 
+router.get("/all", async (req, res) => {
+  try {
+    const rejectedBookings = await Booking.find().populate("userId seminarHallId");
+    res.status(200).json({ bookings:rejectedBookings });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching pending bookings for manager", error });
+  }
+});
+
 // Route for admin to reject booking
 router.patch(
   "/:bookingId/reject/admin",
