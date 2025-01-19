@@ -74,7 +74,7 @@ const Dashboard = () => {
           </div>
         </div>
         
-        {/* Recent Activity Section */}
+        
         
       </div>
     );
@@ -234,11 +234,11 @@ const Dashboard = () => {
             </div>
             
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-1 mr-2">
+              <div className="flex items-center space-x-3 mr-2">
                 <div className="w-8 h-8  rounded-full flex items-center justify-center">
                   <User size={18} className="text-blue-600" />
                 </div>
-                <span className="text-sm font-medium text-gray-700">{user.username}</span>
+                <span className="text-sm font-medium text-gray-700"> {user.username || 'User'}</span>
               </div>
               <div className="h-6 w-px bg-gray-200"></div>
               <button
@@ -305,47 +305,65 @@ const Dashboard = () => {
             </div>
           )}
 
-          {activeTab === "Bookings" && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-semibold text-gray-800">My Bookings</h2>
-              {bookings.length === 0 ? (
-                <div className="bg-white border border-gray-100 rounded-xl p-8 text-center">
-                  <Calendar className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-4 text-lg font-medium text-gray-800">No bookings found</h3>
-                  <p className="mt-2 text-gray-500">Start by booking a seminar hall from the dashboard.</p>
+{activeTab === "Bookings" && (
+  <div className="space-y-6">
+    <h2 className="text-2xl font-semibold text-gray-800">My Bookings</h2>
+    {bookings.length === 0 ? (
+      <div className="bg-white border border-gray-100 rounded-xl p-8 text-center">
+        <Calendar className="mx-auto h-12 w-12 text-gray-400" />
+        <h3 className="mt-4 text-lg font-medium text-gray-800">No bookings found</h3>
+        <p className="mt-2 text-gray-500">Start by booking a seminar hall from the dashboard.</p>
+      </div>
+    ) : (
+      <div className="space-y-4">
+        {bookings.map((booking) => (
+          <div
+            key={booking._id}
+            className={`border rounded-xl p-4 hover:shadow-sm transition-all duration-200
+              ${
+                booking.status === 'approved_by_admin'
+                  ? 'border-green-200 bg-green-300'
+                  : booking.status === 'approved_by_manager' || booking.status === 'pending'
+                  ? 'border-yellow-200 bg-yellow-300'
+                  : 'border-red-200 bg-red-200'
+              }`}
+          >
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-lg font-medium text-gray-800">{booking.seminarHallId.name}</h3>
+                <div className="mt-1 flex items-center space-x-3">
+                  <span
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                      ${
+                        booking.status === 'approved_by_admin'
+                          ? 'bg-green-100 text-green-700'
+                          : booking.status === 'approved_by_manager' || booking.status === 'pending'
+                          ? 'bg-yellow-100 text-yellow-700'
+                          : 'bg-red-100 text-red-700'
+                      }`}
+                  >
+                    {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                  </span>
+                  <span className="text-sm text-gray-500">
+                    {new Date(booking.bookingDate).toLocaleDateString()}
+                  </span>
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {bookings.map((booking) => (
-                    <div
-                      key={booking._id}
-                      className={`bg-white border rounded-xl p-4 hover:shadow-sm transition-all duration-200
-                        ${booking.status === 'approved' ? 'border-green-200 bg-green-50' :
-                          booking.status === 'pending' ? 'border-yellow-200 bg-yellow-50' :
-                          'border-red-200 bg-red-50'}`}
-                    >
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <h3 className="text-lg font-medium text-gray-800">{booking.seminarHallId.name}</h3>
-                          <div className="mt-1 flex items-center space-x-3">
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                              ${booking.status === 'approved_by_admin' ? 'bg-green-100 text-green-700' : 
-                                booking.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 
-                                'bg-red-100 text-red-700'}`}>
-                              {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-                            </span>
-                            <span className="text-sm text-gray-500">
-                              {new Date(booking.bookingDate).toLocaleDateString()}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              </div>
+              {/* Move the button to the right */}
+              <Link
+                to={`/booking-details/${booking._id}/user`}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                View Details
+              </Link>
             </div>
-          )}
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+)}
+
 
 {activeTab === "Profile" && (
           <ProfileSection 

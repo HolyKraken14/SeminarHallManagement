@@ -10,6 +10,7 @@ import SeminarHallDetails from "./components/SeminarHallDetails";
 import BookingTab from "./components/BookingTab";
 import BookingDetailsManager from "./components/BookingDetailsManager"
 import BookingDetailsAdmin from "./components/BookingDetailsAdmin"
+import BookingDetailsUser from "./components/BookingDetailsUser"
 import "./App.css"; // Import CSS for styling
 
 const App = () => {
@@ -180,6 +181,7 @@ const App = () => {
         <Route path="/book/:seminarHallId" element={<BookingTab />} />
         <Route path="/booking-details/:bookingId/manager" element={<BookingDetailsManager />} />
         <Route path="/booking-details/:bookingId/admin" element={<BookingDetailsAdmin />} />
+        <Route path="/booking-details/:bookingId/user" element={<BookingDetailsUser />} />
         
 
 
