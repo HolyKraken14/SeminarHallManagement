@@ -171,9 +171,9 @@ const Dashboard = () => {
 
   const getStatusColor = (status) => {
     const colors = {
-      pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      approved: 'bg-green-100 text-green-800 border-green-200',
-      rejected: 'bg-red-100 text-red-800 border-red-200'
+      pending: 'bg-yellow-50 text-yellow-800 border-yellow-200',
+      approved: 'bg-green-50 text-green-800 border-green-200',
+      rejected: 'bg-red-50 text-red-800 border-red-200'
     };
     return colors[status] || 'bg-gray-100 text-gray-800 border-gray-200';
   };
@@ -228,19 +228,19 @@ const Dashboard = () => {
                 onClick={toggleSidebar}
                 className=" bg-white  hover:bg-white"
               >
-                <Menu size={22} className="text-black" />
+                <Menu size={23} className="text-indigo-800" />
               </button>
               <div className="flex items-center">
-                <h1 className="text-xl font-semibold text-gray-800 whitespace-nowrap">User Dashboard</h1>
+                <h1 className="text-xl font-semibold text-indigo-700 whitespace-nowrap">Welcome, {user.username}</h1>
               </div>
             </div>
             
             <div className="flex items-center space-x-6">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
+              <div className="flex items-center space-x-5">
+                <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
                   <User size={20} className="text-indigo-600" />
                 </div>
-                <span className="text-sm font-medium text-gray-700"> {user.username || 'User'}</span>
+                <div className="flex w-20"><span className="text-sm font-medium text-gray-700"> {user.username || 'User'}</span></div>
               </div>
               <div className="h-8 w-px bg-gray-200"></div>
               <button
@@ -261,7 +261,7 @@ const Dashboard = () => {
           {activeTab === "Dashboard" && (
             <div className="space-y-8">
               <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-800">Seminar Halls</h2>
+                <h2 className="text-2xl font-bold text-gray-800">Book a Seminar Hall</h2>
               </div>
               
               {loading && (

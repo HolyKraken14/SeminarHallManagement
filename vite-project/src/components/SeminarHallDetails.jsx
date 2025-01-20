@@ -63,7 +63,7 @@ const SeminarHallDetails = () => {
         Back
       </button>
 
-      <div className="max-w-7xl mx-auto pt-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto pt-8 px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-8">
           <div className="items-center space-x-2 px-4 py-6 rounded-xl 
@@ -77,33 +77,34 @@ const SeminarHallDetails = () => {
           </div>
         </div>
 
-        {/* Image Carousel Section */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
-          <div className="p-10">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Gallery</h2>
-            <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
-              <Carousel images={hall.images || []} />
-            </div>
-          </div>
-        </div>
+        
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Hall Information Section */}
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          {/* Image Carousel Section */}
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+            <div className="p-10">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">Gallery</h2>
+              <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
+                <Carousel images={hall.images || []} />
+              </div>
+            </div>
+          </div>
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
             <div className="p-6">
               <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
                 <Info className="w-5 h-5 mr-2 text-blue-600" />
                 Hall Information
               </h2>
               <div className="space-y-6">
-                <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center justify-between p-4 bg-gray-100 rounded-lg">
                   <div className="flex items-center">
                     <Users className="w-5 h-5 text-blue-600 mr-3" />
                     <span className="text-gray-600">Seating Capacity</span>
                   </div>
                   <span className="font-semibold text-gray-800">{hall.capacity || "N/A"}</span>
                 </div>
-                <div className="p-4 bg-gray-50 rounded-lg">
+                <div className="p-4 bg-gray-100 rounded-lg">
                   <div className="flex items-center mb-2">
                     <Calendar className="w-5 h-5 text-blue-600 mr-3" />
                     <span className="text-gray-600">Description</span>
@@ -113,54 +114,53 @@ const SeminarHallDetails = () => {
               </div>
             </div>
           </div>
-
-          {/* Equipment Section */}
-          <div className="bg-white rounded-xl shadow-md overflow-hidden">
-            <div className="p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
-                <Cpu className="w-5 h-5 mr-2 text-blue-600" />
-                Equipment
-              </h2>
-              {hall.equipment && hall.equipment.length > 0 ? (
-                <div className="space-y-4">
-                  {hall.equipment.map((item, index) => (
-                    <div key={index} className="p-4 bg-gray-50 rounded-lg">
-                      <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-medium text-gray-800">{item.name}</h3>
-                        <span className={`flex items-center px-3 py-1 rounded-full text-sm ${
-                          item.available 
-                            ? 'bg-green-100 text-green-700' 
-                            : 'bg-red-100 text-red-700'
+        </div>
+        {/* Equipment Section */}
+        <div className="bg-white rounded-xl shadow-md overflow-hidden">
+          <div className="p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+              <Cpu className="w-5 h-5 mr-2 text-blue-600" />
+              Equipment
+            </h2>
+            {hall.equipment && hall.equipment.length > 0 ? (
+              <div className=" grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {hall.equipment.map((item, index) => (
+                  <div key={index} className="p-4 bg-gray-100 rounded-lg">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-medium text-gray-800">{item.name}</h3>
+                      <span className={`flex items-center px-3 py-1 rounded-full text-sm ${
+                        item.available 
+                          ? 'bg-green-100 text-green-700' 
+                          : 'bg-red-100 text-red-700'
                         }`}>
-                          {item.available ? (
-                            <CheckCircle className="w-4 h-4 mr-1" />
-                          ) : (
-                            <XCircle className="w-4 h-4 mr-1" />
-                          )}
-                          {item.available ? "Available" : "Not Available"}
-                        </span>
+                        {item.available ? (
+                          <CheckCircle className="w-4 h-4 mr-1" />
+                        ) : (
+                          <XCircle className="w-4 h-4 mr-1" />
+                        )}
+                        {item.available ? "Available" : "Not Available"}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div className="text-gray-600">
+                        <p>Type: {item.type || "N/A"}</p>
+                        <p className="mt-1">Condition: {item.condition || "Unknown"}</p>
                       </div>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div className="text-gray-600">
-                          <p>Type: {item.type || "N/A"}</p>
-                          <p className="mt-1">Condition: {item.condition || "Unknown"}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-gray-800 font-medium">
-                            {item.quantity} units
-                          </p>
-                        </div>
+                      <div className="text-right">
+                        <p className="text-gray-800 font-medium">
+                          {item.quantity} units
+                        </p>
                       </div>
                     </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <Cpu className="w-12 h-12 mx-auto mb-4 opacity-40" />
-                  <p>No equipment available for this hall.</p>
-                </div>
-              )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+            <div className="text-center py-8 text-gray-500">
+              <Cpu className="w-12 h-12 mx-auto mb-4 opacity-40" />
+              <p>No equipment available for this hall.</p>
             </div>
+            )}
           </div>
         </div>
       </div>

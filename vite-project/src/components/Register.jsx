@@ -1,21 +1,45 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import React, { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import axios from "axios"
+import { Eye, EyeOff } from "lucide-react"
 
 const Register = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
-  const navigate = useNavigate();
+  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [message, setMessage] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [passwordStrength, setPasswordStrength] = useState({
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    special: false,
+  })
+  const navigate = useNavigate()
+
+  const validatePassword = (pass) => {
+    setPasswordStrength({
+      length: pass.length >= 8,
+      uppercase: /[A-Z]/.test(pass),
+      lowercase: /[a-z]/.test(pass),
+      number: /[0-9]/.test(pass),
+      special: /[^A-Za-z0-9]/.test(pass),
+    })
+  }
 
   const handleRegister = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    const rvceEmailRegex = /^[a-zA-Z0-9._%+-]+@rvce\.edu\.in$/;
+    const rvceEmailRegex = /^[a-zA-Z0-9._%+-]+@rvce\.edu\.in$/
     if (!rvceEmailRegex.test(email)) {
-      setMessage("Only RVCE email IDs are allowed.");
-      return;
+      setMessage("Only RVCE email IDs are allowed.")
+      return
+    }
+
+    if (!Object.values(passwordStrength).every(Boolean)) {
+      setMessage("Please ensure your password meets all the criteria.")
+      return
     }
 
     try {
@@ -23,21 +47,21 @@ const Register = () => {
         username,
         email,
         password,
-      });
+      })
 
-      setMessage(`Registration successful: ${response.data.message}`);
+      setMessage(`Registration successful: ${response.data.message}`)
 
       setTimeout(() => {
-        navigate("/login");
-      }, 1500);
+        navigate("/login")
+      }, 1500)
     } catch (error) {
       if (error.response) {
-        setMessage(`Error: ${error.response.data.message}`);
+        setMessage(`Error: ${error.response.data.message}`)
       } else {
-        setMessage("Error: Could not connect to the server.");
+        setMessage("Error: Could not connect to the server.")
       }
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 to-white py-12 px-4 sm:px-6 lg:px-8">
@@ -53,9 +77,7 @@ const Register = () => {
           <form onSubmit={handleRegister} className="space-y-6">
             {/* Username Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Username
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
               <div className="relative">
                 <input
                   type="text"
@@ -72,9 +94,7 @@ const Register = () => {
 
             {/* Email Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                RVCE Email Address
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">RVCE Email Address</label>
               <div className="relative">
                 <input
                   type="email"
@@ -92,20 +112,41 @@ const Register = () => {
 
             {/* Password Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
               <div className="relative">
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value)
+                    validatePassword(e.target.value)
+                  }}
                   required
                   className="appearance-none block w-full px-4 py-3 border border-gray-300 
                     rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 
                     focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   placeholder="Create a strong password"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="bg-white absolute focus:border-transparent w-10 right-1 top-1 bottom-1 flex items-center pr-3 hover:bg-gray-100 transition-all duration-200"
+                >
+                  {showPassword ? (
+                    <Eye className="h-5 w-5 text-gray-400" />
+                  ) : (
+                    <EyeOff className="h-5 w-5 text-gray-400" />
+                  )}
+                </button>
+              </div>
+              <div className="mt-2 space-y-1">
+                {Object.entries(passwordStrength).map(([criterion, isValid]) => (
+                  <div key={criterion} className="flex items-center space-x-2">
+                    <span className={`text-xs ${isValid ? "text-green-500" : "text-red-500"}`}>
+                      {isValid ? "✓" : "✗"} {criterion.charAt(0).toUpperCase() + criterion.slice(1)}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -113,9 +154,7 @@ const Register = () => {
             {message && (
               <div
                 className={`p-4 rounded-lg ${
-                  message.startsWith("Error")
-                    ? "bg-red-50 text-red-700"
-                    : "bg-green-50 text-green-700"
+                  message.startsWith("Error") ? "bg-red-50 text-red-700" : "bg-green-50 text-green-700"
                 }`}
               >
                 <p className="text-sm font-medium">{message}</p>
@@ -125,9 +164,9 @@ const Register = () => {
             {/* Register Button */}
             <button
               type="submit"
-              className="items-center space-x-2 px-4 py-3 rounded-xl 
-              bg-gradient-to-r from-indigo-600 to-indigo-700 text-white-700 
-              hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl0
+              className="w-full items-center space-x-2 px-4 py-3 rounded-xl 
+              bg-gradient-to-r from-indigo-600 to-indigo-700 text-white 
+              hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl
               focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
               transform transition-all duration-200 ease-in-out hover:scale-[1.02]"
             >
@@ -141,8 +180,8 @@ const Register = () => {
                 <button
                   onClick={() => navigate("/login")}
                   className="items-center space-x-2 px-4 py-3 rounded-xl 
-                  bg-gradient-to-r from-indigo-600 to-indigo-700 text-white-700 
-                  hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl0
+                  bg-gradient-to-r from-indigo-600 to-indigo-700 text-white 
+                  hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl
                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
                   transform transition-all duration-200 ease-in-out hover:scale-[1.02]"
                 >
@@ -155,13 +194,12 @@ const Register = () => {
 
         {/* Footer */}
         <div className="mt-8 text-center">
-          <p className="text-xs text-gray-500">
-            By registering, you agree to our Terms of Service and Privacy Policy
-          </p>
+          <p className="text-xs text-gray-500">By registering, you agree to our Terms of Service and Privacy Policy</p>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Register;
+export default Register
+

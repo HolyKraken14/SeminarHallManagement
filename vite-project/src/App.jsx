@@ -11,8 +11,7 @@ import BookingTab from "./components/BookingTab";
 import BookingDetailsManager from "./components/BookingDetailsManager"
 import BookingDetailsAdmin from "./components/BookingDetailsAdmin"
 import BookingDetailsUser from "./components/BookingDetailsUser"
-import BookingDetailsUser from "./components/BookingDetailsUser"
-import "./App.css"; // Import CSS for styling
+// import "./App.css"; // Import CSS for styling
 
 const App = () => {
   const [token, setToken] = useState(localStorage.getItem("token"));
