@@ -305,7 +305,7 @@ const AdminDashboard = () => {
             
             <div className="flex items-center space-x-6">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-7 bg-indigo-100 rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
                   <User size={20} className="text-indigo-600" />
                 </div>
                 <span className="text-sm font-medium text-gray-700">{user?.username || 'Admin'}</span>

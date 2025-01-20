@@ -253,7 +253,7 @@ const Dashboard = () => {
             
             <div className="flex items-center space-x-6">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-7 bg-indigo-100 rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
                   <User size={20} className="text-indigo-600" />
                 </div>
                 <span className="text-sm font-medium text-gray-700">{state.user?.username}</span>
@@ -289,7 +289,7 @@ const Dashboard = () => {
                   {state.error}
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-3 gap-14">
                   {state.seminarHalls.map((hall) => (
                     <div 
                       key={hall._id} 

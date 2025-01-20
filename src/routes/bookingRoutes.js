@@ -222,22 +222,6 @@ router.post("/confirm", async (req, res) => {
 
     // Update the status to 'booked'
     booking.status = "booked";
-    
-
-    // Send email to the user
-    const emailContent = {
-      to: "vrushabhbhatt9123@gmail.com",
-      subject: "Seminar Hall Booking Confirmed",
-      text: `Dear user,\n\nYour booking for the seminar hall has been confirmed. Enjoy your event!\n\nThank you.`,
-    };
-
-    try {
-      await sendEmail(emailContent);
-      console.log("Email sent successfully");
-    } catch (emailError) {
-      console.error("Failed to send email:", emailError);
-      // Continue with the booking process even if email fails
-    }
 
     await booking.save();
 
@@ -373,16 +357,52 @@ router.patch(
 
       booking.status = "rejected_by_manager";
       booking.rejectionReason = reason; // Save the rejection reason
+
+      let coordinatorName = "Event Coordinator";
+      // Get the user's email from the booking's eventCoordinators
+      if (booking.eventCoordinators && booking.eventCoordinators.length > 0) {
+        coordinatorName = booking.eventCoordinators[0].name || "Event Coordinator";
+        coordinatorEmail = booking.eventCoordinators[0].email;
+      }
+
+      if (!coordinatorEmail) {
+        console.warn(`No coordinator email found for booking ${bookingId}. Using user's email as fallback.`);
+        coordinatorEmail = user.email;  // Fallback to user's email if no coordinator email is found
+      }
+
+      if (!coordinatorEmail) {
+        throw new Error("No valid email found for sending rejection notification");
+      }
+
+      // Prepare email content
+      const emailContent = {
+        to: coordinatorEmail,
+        subject: "Seminar Hall Booking Rejected",
+        text: `Dear ${coordinatorName},
+Your booking for seminar hall has been rejected. 
+Reason: ${reason}`
+      };
+
+      // Send email
+      try {
+        await sendEmail(emailContent);
+        console.log("Rejection email sent successfully");
+      } catch (emailError) {
+        console.error("Failed to send rejection email:", emailError);
+        // Continue with the booking process even if email fails
+      }
+
+      // Save the booking after status update
       await booking.save();
 
       // Send notification
-      const user = await User.findById(booking.userId);
-      const notification = new Notification({
-        userId: user._id,
-        message: `Your booking for seminar hall "${booking.seminarHallId}" has been rejected. Reason: ${reason}`,
-        bookingId,
-      });
-      await notification.save();
+      // const user = await User.findById(booking.userId);
+      // const notification = new Notification({
+      //   userId: user._id,
+      //   message: `Your booking for seminar hall "${booking.seminarHallId}" has been rejected. Reason: ${reason}`,
+      //   bookingId,
+      // });
+      // await notification.save();
 
       res.status(200).json({ message: "Booking rejected with reason", booking });
     } catch (error) {
@@ -419,26 +439,63 @@ router.patch(
       // Update the booking status to 'rejected_by_admin' and include reason
       booking.status = "rejected_by_admin";
       booking.rejectionReason = reason;
+
+      let coordinatorName = "Event Coordinator";
+      // Get the user's email from the booking's eventCoordinators
+      if (booking.eventCoordinators && booking.eventCoordinators.length > 0) {
+        coordinatorName = booking.eventCoordinators[0].name || "Event Coordinator";
+        coordinatorEmail = booking.eventCoordinators[0].email;
+      }
+
+      if (!coordinatorEmail) {
+        console.warn(`No coordinator email found for booking ${bookingId}. Using user's email as fallback.`);
+        coordinatorEmail = user.email;  // Fallback to user's email if no coordinator email is found
+      }
+
+      if (!coordinatorEmail) {
+        throw new Error("No valid email found for sending rejection notification");
+      }
+
+      // Prepare email content
+      const emailContent = {
+        to: coordinatorEmail,
+        subject: "Seminar Hall Booking Rejected",
+        text: `Dear ${coordinatorName},
+Your booking for seminar hall has been rejected. 
+Reason: ${reason}`
+      };
+
+      // Send email
+      try {
+        await sendEmail(emailContent);
+        console.log("Rejection email sent successfully");
+      } catch (emailError) {
+        console.error("Failed to send rejection email:", emailError);
+        // Continue with the booking process even if email fails
+      }
+
+      // Save the booking after status update
       await booking.save();
 
-      // Notify the user and manager
-      const user = await User.findById(booking.userId);
-      const manager = await User.findById(booking.managerId);
+      // // Notify the user and manager
+      // const user = await User.findById(booking.userId);
+      // const manager = await User.findById(booking.managerId);
 
-      const userNotification = new Notification({
-        userId: user._id,
-        message: `Your booking for seminar hall "${booking.seminarHallId}" has been rejected by the admin. Reason: ${reason}`,
-        bookingId: booking._id,
-      });
+      // const userNotification = new Notification({
+      //   userId: user._id,
+      //   message: `Your booking for seminar hall has been rejected by the admin.
+      //   Reason: ${reason}`,
+      //   bookingId: booking._id,
+      // });
 
-      const managerNotification = new Notification({
-        userId: manager._id,
-        message: `Booking for seminar hall "${booking.seminarHallId}" has been rejected by the admin. Reason: ${reason}`,
-        bookingId: booking._id,
-      });
+      // const managerNotification = new Notification({
+      //   userId: manager._id,
+      //   message: `Booking for seminar hall "${booking.seminarHallId}" has been rejected by the admin. Reason: ${reason}`,
+      //   bookingId: booking._id,
+      // });
 
-      await userNotification.save();
-      await managerNotification.save();
+      // await userNotification.save();
+      // await managerNotification.save();
 
       res.status(200).json({ message: "Booking rejected by admin", booking });
     } catch (error) {
