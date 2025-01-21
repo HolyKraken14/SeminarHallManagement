@@ -364,8 +364,8 @@ const Dashboard = () => {
                   <div className="animate-spin rounded-full h-12 w-12 border-4 border-indigo-500 border-t-transparent"></div>
                 </div>
               )}
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-3 gap-8">
                 {seminarHalls.map((hall) => (
                   <div
                     key={hall._id}
