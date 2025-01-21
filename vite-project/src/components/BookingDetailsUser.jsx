@@ -1,55 +1,53 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { AlertCircle, CheckCircle, Clock, User, Calendar, Clock3, ArrowLeft } from "lucide-react";
+import React, { useState, useEffect } from "react"
+import { useParams, useNavigate } from "react-router-dom"
+import axios from "axios"
+import { AlertCircle, CheckCircle, Clock, User, Calendar, Clock3, ArrowLeft } from "lucide-react"
 
 const BookingDetailsUser = () => {
-  const { bookingId } = useParams();
-  const [bookingDetails, setBookingDetails] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  
-  const navigate = useNavigate();
+  const { bookingId } = useParams()
+  const [bookingDetails, setBookingDetails] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchBookingDetails = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token")
         if (!token) {
-          navigate("/login");
-          return;
+          navigate("/login")
+          return
         }
 
-        const response = await axios.get(
-          `http://localhost:5000/api/bookings/${bookingId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await axios.get(`http://localhost:5000/api/bookings/${bookingId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
 
-        setBookingDetails(response.data);
-        setLoading(false);
+        setBookingDetails(response.data)
+        setLoading(false)
       } catch (err) {
-        setError(
-          err.response?.data?.message || "Failed to fetch booking details."
-        );
-        setLoading(false);
+        setError(err.response?.data?.message || "Failed to fetch booking details.")
+        setLoading(false)
       }
-    };
+    }
 
-    fetchBookingDetails();
-  }, [bookingId, navigate]);
+    fetchBookingDetails()
+  }, [bookingId, navigate])
 
-  
+  const handleGoBack = () => {
+    // Navigate back to the Dashboard with the Bookings tab active
+    navigate("/user-dashboard", { state: { activeTab: "Bookings" } })
+  }
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </div>
-    );
+    )
   }
 
   if (error) {
@@ -60,13 +58,13 @@ const BookingDetailsUser = () => {
           <p>{error}</p>
         </div>
         <button
-          onClick={() => navigate(-1)}
+          onClick={handleGoBack}
           className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           Go Back
         </button>
       </div>
-    );
+    )
   }
 
   if (!bookingDetails) {
@@ -77,47 +75,69 @@ const BookingDetailsUser = () => {
           <p>No booking details found</p>
         </div>
         <button
-          onClick={() => navigate(-1)}
+          onClick={handleGoBack}
           className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           Go Back
         </button>
       </div>
-    );
+    )
   }
 
   const getStatusBadge = (status) => {
-    const styles = {
-      approved: "bg-green-500 text-white",
-      rejected: "bg-red-500 text-white",
-      pending: "bg-yellow-500 text-white",
-    };
+    // Define the display status mapping
+    const getDisplayStatus = (backendStatus) => {
+      switch (backendStatus) {
+        case "pending":
+        case "approved_by_manager":
+          return "Pending"
+        case "approved_by_admin":
+          return "Confirmed"
+        case "rejected_by_manager":
+        case "rejected_by_admin":
+          return "Rejected"
+        default:
+          return "Unknown"
+      }
+    }
 
+    // Define styles based on the simplified status categories
+    const styles = {
+      Pending: "bg-yellow-500 text-white",
+      Confirmed: "bg-green-500 text-white",
+      Rejected: "bg-red-500 text-white",
+      Unknown: "bg-gray-500 text-white",
+    }
+
+    // Define icons based on the simplified status categories
     const icons = {
-      approved: <CheckCircle className="w-4 h-4 mr-1" />,
-      rejected: <AlertCircle className="w-4 h-4 mr-1" />,
-      pending: <Clock className="w-4 h-4 mr-1" />,
-    };
+      Pending: <Clock className="w-4 h-4 mr-1" />,
+      Confirmed: <CheckCircle className="w-4 h-4 mr-1" />,
+      Rejected: <AlertCircle className="w-4 h-4 mr-1" />,
+      Unknown: <AlertCircle className="w-4 h-4 mr-1" />,
+    }
+
+    const displayStatus = getDisplayStatus(status)
 
     return (
-      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${styles[status]}`}>
-        {icons[status]}
-        {status.charAt(0).toUpperCase() + status.slice(1)}
+      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${styles[displayStatus]}`}>
+        {icons[displayStatus]}
+        {displayStatus}
       </span>
-    );
-  };
+    )
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-      {/* Back button */}
-      <button
-        onClick={() => navigate(-1)}
-        className="flex items-center bg-gray-50 text-gray-700 hover:bg-gray-50 transition-colors duration-200"
-      >
-        <ArrowLeft className="w-5 h-5 mr-2" />
-        Back
-      </button>
+        {/* Back button */}
+        <button
+          onClick={handleGoBack}
+          className="flex items-center bg-gray-50 text-gray-700 hover:bg-gray-100 transition-colors duration-200 px-6 py-4"
+        >
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Back to Bookings
+        </button>
         {/* Header */}
         <div className="bg-gray-50 border-b border-gray-200 px-6 py-4">
           <h1 className="text-2xl font-bold text-gray-900">Booking Details</h1>
@@ -144,7 +164,9 @@ const BookingDetailsUser = () => {
                   <div className="flex items-center text-gray-600">
                     <Clock3 className="w-4 h-4 mr-2 text-blue-600" />
                     <span className="font-medium mr-2">Time:</span>
-                    <span>{bookingDetails.startTime} - {bookingDetails.endTime}</span>
+                    <span>
+                      {bookingDetails.startTime} - {bookingDetails.endTime}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -214,11 +236,24 @@ const BookingDetailsUser = () => {
             )}
           </div>
         </div>
-
-        
+        <div>
+          {(bookingDetails.status === "rejected_by_manager" || bookingDetails.status === "rejected_by_admin") &&
+            bookingDetails.rejectionReason && (
+              <div className="px-6 py-4 bg-red-50 border-t border-red-100">
+                <div className="flex items-start space-x-3">
+                  <AlertCircle className="w-5 h-5 text-red-500 mt-0.5" />
+                  <div>
+                    <h4 className="text-sm font-semibold text-red-800">Rejection Reason:</h4>
+                    <p className="mt-1 text-sm text-red-700">{bookingDetails.rejectionReason}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+        </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default BookingDetailsUser;
+export default BookingDetailsUser
+

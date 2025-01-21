@@ -24,9 +24,11 @@ const bookingSchema = new mongoose.Schema({
   },
   managerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-}, {
-  timestamps: true
-});
+  rejectionReason: {
+    type: String,
+    default: null
+  }
+}, { timestamps: true });
 
 const Booking = mongoose.model('Booking', bookingSchema);
 module.exports = Booking;

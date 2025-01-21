@@ -76,78 +76,171 @@ const ProfileSection = ({ user, loading, error }) => {
 };
 
 const Dashboard = () => {
+  
   const [state, setState] = useState({
     seminarHalls: [],
     pendingBookings: [],
     approvedBookings: [],
-    rejectedBookings: [],
+    rejectedByManagerBookings: [],
+    rejectedByAdminBookings: [],
     loading: true,
     error: null,
     activeTab: "Dashboard",
-    activeBookingTab: "Pending",
+    bookingTabView: "pending",
     isSidebarVisible: false,
-    user: null
-  });
+    user: null,
+  })
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const updateState = (updates) => {
-    setState(prev => ({ ...prev, ...updates }));
-  };
+    setState((prev) => ({ ...prev, ...updates }))
+  }
 
   const fetchData = async (url, options = {}) => {
     const defaultOptions = {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-      ...options
-    };
+      ...options,
+    }
 
-    const response = await fetch(url, defaultOptions);
-    if (!response.ok) throw new Error(`Failed to fetch: ${response.statusText}`);
-    return response.json();
-  };
+    const response = await fetch(url, defaultOptions)
+    if (!response.ok) throw new Error(`Failed to fetch: ${response.statusText}`)
+    return response.json()
+  }
 
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        updateState({ loading: true });
+        updateState({ loading: true })
         const [hallsData, bookingsData, userData] = await Promise.all([
           fetchData("http://localhost:5000/api/seminar-halls"),
           fetchData("http://localhost:5000/api/bookings/all"),
-          fetchData(`http://localhost:5000/api/users/user/${localStorage.getItem('userId')}`)
-        ]);
+          fetchData(`http://localhost:5000/api/users/user/${localStorage.getItem("userId")}`),
+        ])
 
-        const bookings = bookingsData.bookings;
+        const bookings = bookingsData.bookings
         updateState({
           seminarHalls: hallsData,
-          pendingBookings: bookings.filter(b => b.status === "pending"),
-          approvedBookings: bookings.filter(b => b.status === "approved_by_manager"),
-          rejectedBookings: bookings.filter(b => b.status === "rejected_by_manager"),
+          pendingBookings: bookings.filter((b) => b.status === "pending"),
+          approvedBookings: bookings.filter(
+            (b) => b.status === "approved_by_manager" || b.status === "approved_by_admin",
+          ),
+          rejectedByManagerBookings: bookings.filter((b) => b.status === "rejected_by_manager"),
+          rejectedByAdminBookings: bookings.filter((b) => b.status === "rejected_by_admin"),
           user: userData.userDetails,
-          loading: false
-        });
+          loading: false,
+        })
       } catch (error) {
-        updateState({ error: error.message, loading: false });
+        updateState({ error: error.message, loading: false })
       }
-    };
+    }
 
-    fetchAllData();
-  }, []);
+    fetchAllData()
+  }, [])
 
   const handleLogout = () => {
-    localStorage.clear();
-    navigate("/login");
-  };
+    localStorage.clear()
+    navigate("/login")
+  }
 
-  const getStatusColor = (status) => {
-    const colors = {
-      pending: 'bg-yellow-50 text-yellow-800 border-yellow-200',
-      approved_by_manager: 'bg-green-50 text-green-800 border-green-200',
-      rejected_by_manager: 'bg-red-50 text-red-800 border-red-200'
-    };
-    return colors[status] || 'bg-gray-100 text-gray-800 border-gray-200';
-  };
+  const getDisplayStatus = (backendStatus) => {
+    switch (backendStatus) {
+      case "pending":
+        return "Pending"
+      case "approved_by_manager":
+      case "approved_by_admin":
+        return "Approved"
+      case "rejected_by_manager":
+        return "Rejected by Manager"
+      case "rejected_by_admin":
+        return "Rejected by Admin"
+      default:
+        return "Unknown"
+    }
+  }
+
+  const getStatusStyle = (backendStatus) => {
+    const baseStyle = "inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium"
+
+    switch (backendStatus) {
+      case "pending":
+        return `${baseStyle} bg-yellow-100 text-yellow-700`
+      case "approved_by_manager":
+      case "approved_by_admin":
+        return `${baseStyle} bg-green-100 text-green-700`
+      case "rejected_by_manager":
+      case "rejected_by_admin":
+        return `${baseStyle} bg-red-100 text-red-700`
+      default:
+        return `${baseStyle} bg-gray-100 text-gray-700`
+    }
+  }
+
+  const filterBookings = (status) => {
+    switch (status) {
+      case "pending":
+        return state.pendingBookings
+      case "approved":
+        return state.approvedBookings
+      case "rejectedByManager":
+        return state.rejectedByManagerBookings
+      case "rejectedByAdmin":
+        return state.rejectedByAdminBookings
+      default:
+        return []
+    }
+  }
+
+  const BookingsList = ({ bookings }) => {
+    if (bookings.length === 0) {
+      return (
+        <div className="bg-white border border-gray-100 rounded-2xl p-12 text-center shadow-lg">
+          <Calendar className="mx-auto h-16 w-16 text-indigo-400" />
+          <h3 className="mt-6 text-xl font-bold text-gray-800">No bookings found</h3>
+          <p className="mt-3 text-gray-500">No bookings in this category.</p>
+        </div>
+      )
+    }
+
+    return (
+      <div className="space-y-6">
+        {bookings.map((booking) => (
+          <div
+            key={booking._id}
+            className={`border-2 rounded-2xl p-6 transition-all duration-300 hover:shadow-lg transform hover:-translate-y-1
+              ${
+                booking.status === "approved_by_admin" || booking.status === "approved_by_manager"
+                  ? "border-green-200 bg-green-50"
+                  : booking.status === "rejected_by_manager" || booking.status === "rejected_by_admin"
+                    ? "border-red-200 bg-red-50"
+                    : "border-yellow-200 bg-yellow-50"
+              }`}
+          >
+            <div className="flex justify-between items-center">
+              <div>
+                <h3 className="text-xl font-bold text-gray-800">{booking.seminarHallId.name}</h3>
+                <div className="mt-3 flex items-center space-x-4">
+                  <span className={getStatusStyle(booking.status)}>{getDisplayStatus(booking.status)}</span>
+                  <span className="text-sm text-gray-500 font-medium">
+                    {new Date(booking.bookingDate).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+              <Link
+                to={`/booking-details/${booking._id}/manager`}
+                className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-xl 
+                  hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
+              >
+                View Details
+              </Link>
+            </div>
+          </div>
+        ))}
+      </div>
+    )
+  }
 
   const renderBookings = (bookings) => {
     if (bookings.length === 0) {
@@ -326,29 +419,41 @@ const Dashboard = () => {
             </div>
           )}
 
-          {state.activeTab === "Bookings" && (
-            <div className="space-y-8">
-              <h2 className="text-2xl font-bold text-gray-800">Bookings</h2>
-              <div className="flex space-x-4 mb-6">
-                {["Pending", "Approved", "Rejected"].map((tab) => (
+{state.activeTab === "Bookings" && (
+          <div className="space-y-8">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">All Bookings</h2>
+
+              {/* Booking Status Tabs */}
+              <div className="flex space-x-4 mb-8">
+                {[
+                  { id: 'pending', label: 'Pending', color: 'yellow' },
+                  { id: 'approved', label: 'Approved', color: 'green' },
+                  { id: 'rejectedByManager', label: 'Rejected by Manager', color: 'red' },
+                  { id: 'rejectedByAdmin', label: 'Rejected by Admin', color: 'red' }
+                ].map(({ id, label, color }) => (
                   <button
-                    key={tab}
-                    onClick={() => updateState({ activeBookingTab: tab })}
-                    className={`px-6 py-3 rounded-xl transition-colors ${
-                      state.activeBookingTab === tab
-                        ? "bg-gradient-to-r from-indigo-600 to-indigo-700 text-white"
-                        : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                    }`}
+                    key={id}
+                    onClick={() => updateState({ bookingTabView: id })}
+                    className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 
+                      ${state.bookingTabView === id
+                        ? `bg-${color}-100 text-${color}-800 shadow-lg`
+                        : 'bg-white text-gray-600 hover:bg-gray-50'
+                      } border-2 border-${color}-200`}
                   >
-                    {tab} Bookings
+                    {label}
+                    <span className="ml-2 px-2 py-1 rounded-lg bg-white text-sm">
+                      {filterBookings(id).length}
+                    </span>
                   </button>
                 ))}
               </div>
-              {state.activeBookingTab === "Pending" && renderBookings(state.pendingBookings)}
-              {state.activeBookingTab === "Approved" && renderBookings(state.approvedBookings)}
-              {state.activeBookingTab === "Rejected" && renderBookings(state.rejectedBookings)}
+
+              {/* Filtered Bookings List */}
+              <BookingsList bookings={filterBookings(state.bookingTabView)} />
             </div>
-          )}
+          </div>
+        )}
 
           {state.activeTab === "Profile" && (
             <ProfileSection 

@@ -43,6 +43,17 @@ const BookingDetailsManager = () => {
     fetchBookingDetails();
   }, [bookingId, navigate]);
 
+  const handleGoBack = () => {
+    // Navigate back to the Manager Dashboard with the Bookings tab active
+    // and preserve the sidebar state
+    const sidebarVisible = localStorage.getItem("sidebarVisible")
+    navigate("/manager-dashboard", {
+      state: {
+        activeTab: "Bookings",
+        sidebarVisible: sidebarVisible ? JSON.parse(sidebarVisible) : false,
+      },
+    })
+  }
   const handleApprove = async () => {
     try {
       setBookingDetails((prevDetails) => ({
@@ -109,7 +120,7 @@ const BookingDetailsManager = () => {
           <p>{error}</p>
         </div>
         <button
-          onClick={() => navigate(-1)}
+          onClick={handleGoBack}
           className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           Go Back
@@ -126,7 +137,7 @@ const BookingDetailsManager = () => {
           <p>No booking details found</p>
         </div>
         <button
-          onClick={() => navigate(-1)}
+          onClick={handleGoBack}
           className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           Go Back
@@ -137,14 +148,16 @@ const BookingDetailsManager = () => {
 
   const getStatusBadge = (status) => {
     const styles = {
-      approved: "bg-green-500 text-white",
-      rejected: "bg-red-500 text-white",
+      approved_by_manager: "bg-green-500 text-white",
+      approved_by_admin: "bg-green-500 text-white",
+      rejected_by_manager: "bg-red-500 text-white",
       pending: "bg-yellow-500 text-white",
     };
 
     const icons = {
-      approved: <CheckCircle className="w-4 h-4 mr-1" />,
-      rejected: <AlertCircle className="w-4 h-4 mr-1" />,
+      approved_by_manager: <CheckCircle className="w-4 h-4 mr-1" />,
+      approved_by_admin: <CheckCircle className="w-4 h-4 mr-1" />,
+      rejected_by_manager: <AlertCircle className="w-4 h-4 mr-1" />,
       pending: <Clock className="w-4 h-4 mr-1" />,
     };
 
@@ -161,11 +174,11 @@ const BookingDetailsManager = () => {
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
       {/* Back button */}
       <button
-        onClick={() => navigate(-1)}
+        onClick={handleGoBack}
         className="flex items-center bg-gray-50 text-gray-700 hover:bg-gray-50 transition-colors duration-200"
       >
         <ArrowLeft className="w-5 h-5 mr-2" />
-        Back
+        Back to Bookings
       </button>
         {/* Header */}
         <div className="bg-gray-50 border-b border-gray-200 px-6 py-4">
@@ -197,7 +210,7 @@ const BookingDetailsManager = () => {
                   </div>
                 </div>
               </div>
-
+``
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Status</h3>
                 {getStatusBadge(bookingDetails.status)}
@@ -262,7 +275,24 @@ const BookingDetailsManager = () => {
               <p className="text-gray-500">No coordinators specified.</p>
             )}
           </div>
+          
         </div>
+        <div>
+                {(bookingDetails.status === 'rejected_by_manager' || 
+                  bookingDetails.status === 'rejected_by_admin') && 
+                  bookingDetails.rejectionReason && (
+                  <div className="px-6 py-4 bg-red-50 border-t border-red-100">
+                    <div className="flex items-start space-x-3">
+                      <AlertCircle className="w-5 h-5 text-red-500 mt-0.5" />
+                      <div>
+                        <h4 className="text-sm font-semibold text-red-800">Rejection Reason:</h4>
+                        <p className="mt-1 text-sm text-red-700">{bookingDetails.rejectionReason}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                </div>
+        
 
         {/* Footer Actions */}
         <div className="border-t border-gray-200 px-6 py-4 bg-gray-50 space-y-4">
