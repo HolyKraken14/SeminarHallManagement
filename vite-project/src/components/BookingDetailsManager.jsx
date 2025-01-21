@@ -41,7 +41,7 @@ const BookingDetailsManager = () => {
     };
 
     fetchBookingDetails();
-  }, [bookingId, navigate]);
+  }, [bookingId, navigate])
 
   const handleGoBack = () => {
     // Navigate back to the Manager Dashboard with the Bookings tab active
@@ -147,27 +147,48 @@ const BookingDetailsManager = () => {
   }
 
   const getStatusBadge = (status) => {
-    const styles = {
-      approved_by_manager: "bg-green-500 text-white",
-      approved_by_admin: "bg-green-500 text-white",
-      rejected_by_manager: "bg-red-500 text-white",
-      pending: "bg-yellow-500 text-white",
-    };
+    // Define the display status mapping
+    const getDisplayStatus = (backendStatus) => {
+      switch (backendStatus) {
+        case "pending":
+          return "Pending"
+        case "approved_by_manager":
+          return "Confirmed"
+        case "approved_by_admin":
+          return "Confirmed"
+        case "rejected_by_manager":
+        case "rejected_by_admin":
+          return "Rejected"
+        default:
+          return "Unknown"
+      }
+    }
 
+    // Define styles based on the simplified status categories
+    const styles = {
+      Pending: "bg-yellow-500 text-white",
+      Confirmed: "bg-green-500 text-white",
+      Rejected: "bg-red-500 text-white",
+      Unknown: "bg-gray-500 text-white",
+    }
+
+    // Define icons based on the simplified status categories
     const icons = {
-      approved_by_manager: <CheckCircle className="w-4 h-4 mr-1" />,
-      approved_by_admin: <CheckCircle className="w-4 h-4 mr-1" />,
-      rejected_by_manager: <AlertCircle className="w-4 h-4 mr-1" />,
-      pending: <Clock className="w-4 h-4 mr-1" />,
-    };
+      Pending: <Clock className="w-4 h-4 mr-1" />,
+      Confirmed: <CheckCircle className="w-4 h-4 mr-1" />,
+      Rejected: <AlertCircle className="w-4 h-4 mr-1" />,
+      Unknown: <AlertCircle className="w-4 h-4 mr-1" />,
+    }
+
+    const displayStatus = getDisplayStatus(status)
 
     return (
-      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${styles[status]}`}>
-        {icons[status]}
-        {status.charAt(0).toUpperCase() + status.slice(1)}
+      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${styles[displayStatus]}`}>
+        {icons[displayStatus]}
+        {displayStatus}
       </span>
-    );
-  };
+    )
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -210,7 +231,7 @@ const BookingDetailsManager = () => {
                   </div>
                 </div>
               </div>
-``
+
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Status</h3>
                 {getStatusBadge(bookingDetails.status)}

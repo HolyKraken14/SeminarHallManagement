@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Eye, EyeOff } from "lucide-react"
 
 const Login = () => {
   const [credential, setCredential] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -84,15 +86,26 @@ const Login = () => {
               </label>
               <div className="relative">
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {setPassword(e.target.value)}}
                   required
                   className="appearance-none block w-full px-4 py-3 border border-gray-300 
                     rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 
                     focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   placeholder="Enter your password"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="bg-white absolute focus:border-transparent w-10 right-1 top-1 bottom-1 flex items-center pr-3 hover:bg-gray-100 transition-all duration-200"
+                >
+                  {showPassword ? (
+                    <Eye className="h-5 w-5 text-gray-400" />
+                  ) : (
+                    <EyeOff className="h-5 w-5 text-gray-400" />
+                  )}
+                </button>
               </div>
             </div>
 

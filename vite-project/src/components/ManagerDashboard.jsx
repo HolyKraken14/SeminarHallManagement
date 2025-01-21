@@ -437,7 +437,7 @@ const Dashboard = () => {
                     onClick={() => updateState({ bookingTabView: id })}
                     className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 
                       ${state.bookingTabView === id
-                        ? `bg-${color}-100 text-${color}-800 shadow-lg`
+                        ? `bg-${color}-100 text-${color}-800 shadow-lg hover:bg-blue-100`
                         : 'bg-white text-gray-600 hover:bg-gray-50'
                       } border-2 border-${color}-200`}
                   >

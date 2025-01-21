@@ -135,25 +135,47 @@ const BookingDetails = () => {
   }
 
   const getStatusBadge = (status) => {
-    const styles = {
-      approved_by_admin: "bg-green-500 text-white",
-      rejected_by_admin: "bg-red-500 text-white",
-      approved_by_manager: "bg-yellow-500 text-white",
-    };
+    // Define the display status mapping
+    const getDisplayStatus = (backendStatus) => {
+      switch (backendStatus) {
+        case "pending":
+          return "Pending"
+        case "approved_by_manager":
+          return "Pending"
+        case "approved_by_admin":
+          return "Confirmed"
+        case "rejected_by_admin":
+          return "Rejected"
+        default:
+          return "Unknown"
+      }
+    }
 
+    // Define styles based on the simplified status categories
+    const styles = {
+      Pending: "bg-yellow-500 text-white",
+      Confirmed: "bg-green-500 text-white",
+      Rejected: "bg-red-500 text-white",
+      Unknown: "bg-gray-500 text-white",
+    }
+
+    // Define icons based on the simplified status categories
     const icons = {
-      approved_by_admin: <CheckCircle className="w-4 h-4 mr-1" />,
-      rejected_by_admin: <AlertCircle className="w-4 h-4 mr-1" />,
-      approved_by_manager: <Clock className="w-4 h-4 mr-1" />,
-    };
+      Pending: <Clock className="w-4 h-4 mr-1" />,
+      Confirmed: <CheckCircle className="w-4 h-4 mr-1" />,
+      Rejected: <AlertCircle className="w-4 h-4 mr-1" />,
+      Unknown: <AlertCircle className="w-4 h-4 mr-1" />,
+    }
+
+    const displayStatus = getDisplayStatus(status)
 
     return (
-      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${styles[status]}`}>
-        {icons[status]}
-        {status.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${styles[displayStatus]}`}>
+        {icons[displayStatus]}
+        {displayStatus}
       </span>
-    );
-  };
+    )
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
