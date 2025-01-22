@@ -75,37 +75,37 @@ const ProfileSection = ({ user, loading, error }) => {
   );
 };
 
-const ContactForm = () => {
-  return (
-    <div className="bg-white rounded-2xl shadow-lg p-8 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6 text-gray-800">Contact Support</h2>
-      <div className="space-y-6">
-        <div className="flex items-center space-x-4 mb-6">
-          <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center">
-            <Mail size={24} className="text-white" />
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800">Get in Touch</h3>
-            <p className="text-gray-600">We're here to help</p>
-          </div>
-        </div>
-        <form className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
-            <input type="text" className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
-            <textarea className="w-full p-2 border border-gray-300 rounded-lg h-32 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
-          </div>
-          <button className="w-full px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-xl hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl">
-            Send Message
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-};
+// const ContactForm = () => {
+//   return (
+//     <div className="bg-white rounded-2xl shadow-lg p-8 max-w-2xl mx-auto">
+//       <h2 className="text-2xl font-bold mb-6 text-gray-800">Contact Support</h2>
+//       <div className="space-y-6">
+//         <div className="flex items-center space-x-4 mb-6">
+//           <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center">
+//             <Mail size={24} className="text-white" />
+//           </div>
+//           <div>
+//             <h3 className="text-lg font-semibold text-gray-800">Get in Touch</h3>
+//             <p className="text-gray-600">We're here to help</p>
+//           </div>
+//         </div>
+//         <form className="space-y-4">
+//           <div>
+//             <label className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+//             <input type="text" className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" />
+//           </div>
+//           <div>
+//             <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
+//             <textarea className="w-full p-2 border border-gray-300 rounded-lg h-32 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+//           </div>
+//           <button className="w-full px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-xl hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl">
+//             Send Message
+//           </button>
+//         </form>
+//       </div>
+//     </div>
+//   );
+// };
 
 const AdminDashboard = () => {
   const [seminarHalls, setSeminarHalls] = useState([]);
@@ -361,8 +361,8 @@ const AdminDashboard = () => {
             {[
               { id: "Dashboard", icon: Home },
               { id: "Profile", icon: User },
-              { id: "Bookings", icon: Calendar },
-              { id: "Contact", icon: Mail }
+              { id: "Bookings", icon: Calendar }
+              
             ].map(({ id, icon: Icon }) => (
               <button
                 key={id}
@@ -433,7 +433,7 @@ const AdminDashboard = () => {
                 </div>
               )}
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-3 gap-8">
                 {seminarHalls.map((hall) => (
                   <div 
                     key={hall._id} 
@@ -512,7 +512,7 @@ const AdminDashboard = () => {
             />
           )}
 
-          {activeTab === "Contact" && <ContactForm />}
+          {/* {activeTab === "Contact" && <ContactForm />} */}
         </main>
       </div>
     </div>
