@@ -1,7 +1,37 @@
 import React, { useEffect, useState } from "react"
 import { Link, useNavigate, useLocation } from "react-router-dom"
-import { Menu, Home, User, Calendar, Mail, LogOut } from "lucide-react"
+import { Menu, Home, User, Calendar, Mail, LogOut, MessageSquare, X } from "lucide-react"
 import BookingTab from "./BookingTab"
+
+const ChatbaseChatbot = () => {
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+
+  return (
+    <div className="fixed bottom-4 right-4 z-50">
+      <button 
+        onClick={() => setIsChatbotOpen(!isChatbotOpen)}
+        className="bg-indigo-600 text-white p-4 rounded-full shadow-lg hover:bg-indigo-700 transition-colors"
+      >
+        {isChatbotOpen ? (
+          <X size={24}/>
+        ) : (
+          <MessageSquare size={30} />
+        )}
+      </button>
+
+      {isChatbotOpen && (
+        <div className="mt-2 w-96 h-[600px] border rounded-lg shadow-2xl overflow-hidden">
+          <iframe
+            src="https://www.chatbase.co/chatbot-iframe/D6GsxKZgEfpsyxIrbXDE9"
+            width="100%"
+            height="100%"
+            frameBorder="0"
+          />
+        </div>
+      )}
+    </div>
+  );
+};
 
 const Dashboard = () => {
   const location = useLocation()
@@ -471,8 +501,9 @@ const Dashboard = () => {
           </div>
         </div>
       )}
+      <ChatbaseChatbot/>
     </div>
-  )
+  );
 }
 
 export default Dashboard
