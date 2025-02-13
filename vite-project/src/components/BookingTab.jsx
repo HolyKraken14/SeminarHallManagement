@@ -16,6 +16,14 @@ const BookingTab = ({ seminarHall, onClose }) => {
     setContactErrors([...contactErrors, ""])
   }
 
+  const handleRemoveCoordinator = (index) => {
+    const updatedCoordinators = eventCoordinators.filter((_, i) => i !== index)
+    const updatedErrors = contactErrors.filter((_, i) => i !== index)
+    
+    setEventCoordinators(updatedCoordinators)
+    setContactErrors(updatedErrors)
+  }
+
   const validateContact = (contact) => {
     const phoneRegex = /^(\+91|0)?[6-9]\d{9}$/
     return phoneRegex.test(contact)
@@ -171,6 +179,20 @@ const BookingTab = ({ seminarHall, onClose }) => {
             <label className="block mb-2">Event Coordinators:</label>
             {eventCoordinators.map((coordinator, index) => (
               <div key={index} className="grid grid-cols-1 gap-4 mb-4">
+                <div className="flex justify-between items-center">
+                  <h4 className="text-sm font-medium text-gray-700">Coordinator {index + 1}</h4>
+                  {index > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveCoordinator(index)}
+                      className="items-center w-40 space-x-2 px-4 py-2 rounded-xl 
+                      bg-gradient-to-r from-indigo-600 to-indigo-700 text-white-700 
+                    hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
+                      >
+                      Remove
+                    </button>
+                  )}
+                </div>
                 <input
                   type="text"
                   placeholder="Name"

@@ -8,6 +8,8 @@ const BookingDetailsUser = () => {
   const [bookingDetails, setBookingDetails] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const navigate = useNavigate()
 
@@ -36,6 +38,30 @@ const BookingDetailsUser = () => {
 
     fetchBookingDetails()
   }, [bookingId, navigate])
+
+  const handleDeleteBooking = async () => {
+    try {
+      setIsDeleting(true)
+      const token = localStorage.getItem("token")
+      
+      const response = await axios.delete(`http://localhost:5000/api/bookings/${bookingId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+  
+      if (response.status === 200) {
+        navigate("/user-dashboard", { 
+          state: { activeTab: "Bookings" }
+        })
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to delete booking.")
+    } finally {
+      setIsDeleting(false)
+      setShowDeleteConfirmation(false)
+    }
+  }
 
   const handleGoBack = () => {
     // Navigate back to the Dashboard with the Bookings tab active
@@ -139,8 +165,20 @@ const BookingDetailsUser = () => {
           Back to Bookings
         </button>
         {/* Header */}
-        <div className="bg-gray-50 border-b border-gray-200 px-6 py-4">
-          <h1 className="text-2xl font-bold text-gray-900">Booking Details</h1>
+        <div className="flex justify-between bg-gray-50 border-b border-gray-200 px-6 py-4">
+          <div className="flex  items-center">
+            <h1 className="text-2xl font-bold text-gray-900">Booking Details</h1>
+          </div>
+          <div className="flex">
+          {bookingDetails.status !== 'approved_by_admin' && (
+              <button
+                onClick={() => setShowDeleteConfirmation(true)}
+                className="px-4 py-2 w-40 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Cancel Booking
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Content */}
@@ -235,20 +273,30 @@ const BookingDetailsUser = () => {
               <p className="text-gray-500">No coordinators specified.</p>
             )}
           </div>
-        </div>
-        <div>
-          {(bookingDetails.status === "rejected_by_manager" || bookingDetails.status === "rejected_by_admin") &&
-            bookingDetails.rejectionReason && (
-              <div className="px-6 py-4 bg-red-50 border-t border-red-100">
-                <div className="flex items-start space-x-3">
-                  <AlertCircle className="w-5 h-5 text-red-500 mt-0.5" />
-                  <div>
-                    <h4 className="text-sm font-semibold text-red-800">Rejection Reason:</h4>
-                    <p className="mt-1 text-sm text-red-700">{bookingDetails.rejectionReason}</p>
-                  </div>
+          {showDeleteConfirmation && (
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+              <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Confirm</h3>
+                <p className="text-gray-600 mb-6">Are you sure you want to delete this booking? This action cannot be undone.</p>
+                <div className="flex justify-end space-x-4">
+                  <button
+                    onClick={() => setShowDeleteConfirmation(false)}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    disabled={isDeleting}
+                  >
+                    No
+                  </button>
+                  <button
+                    onClick={handleDeleteBooking}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                    disabled={isDeleting}
+                  >
+                    {isDeleting ? "Cancelling..." : "Yes"}
+                  </button>
                 </div>
               </div>
-            )}
+            </div>
+          )}
         </div>
       </div>
     </div>

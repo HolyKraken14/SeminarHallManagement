@@ -504,6 +504,72 @@ Reason: ${reason}`
   }
 );
 
+// Route to delete a booking
+router.delete("/:id", verifyToken, async (req, res) => {
+  try {
+    const bookingId = req.params.id;
+    const userId = req.user.id; // Get the authenticated user's ID
+
+    // Find the booking
+    const booking = await Booking.findById(bookingId);
+
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    // Check if the user is the owner of the booking
+    if (booking.userId.toString() !== userId) {
+      return res.status(403).json({ message: "Not authorized to delete this booking" });
+    }
+
+    // Check if the booking is already approved by admin
+    if (booking.status === "approved_by_admin") {
+      return res.status(400).json({ message: "Cannot delete an approved booking" });
+    }
+
+    // Delete the booking
+    await Booking.findByIdAndDelete(bookingId);
+
+    // If you want to send an email notification about the deletion
+    if (booking.eventCoordinators && booking.eventCoordinators.length > 0) {
+      const coordinatorName = booking.eventCoordinators[0].name || "Event Coordinator";
+      const coordinatorEmail = booking.eventCoordinators[0].email;
+
+      if (coordinatorEmail) {
+        const emailContent = {
+          to: coordinatorEmail,
+          subject: "Booking Cancelled",
+          text: `Dear ${coordinatorName},
+
+Your booking for the seminar hall has been cancelled.
+Booking Details:
+- Event: ${booking.eventName}
+- Date: ${new Date(booking.bookingDate).toLocaleDateString()}
+- Time: ${booking.startTime} - ${booking.endTime}
+
+Thank you.`
+        };
+
+        try {
+          await sendEmail(emailContent);
+        } catch (emailError) {
+          console.error("Failed to send cancellation email:", emailError);
+          // Continue with deletion even if email fails
+        }
+      }
+    }
+
+    res.status(200).json({ message: "Booking deleted successfully" });
+
+  } catch (error) {
+    console.error("Error in delete booking route:", error);
+    res.status(500).json({ 
+      message: "Error deleting booking", 
+      error: error.message 
+    });
+  }
+});
+
 
 module.exports = router;
 
