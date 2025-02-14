@@ -570,6 +570,81 @@ Thank you.`
   }
 });
 
+// Route to update a booking
+router.patch("/:id", verifyToken, async (req, res) => {
+  try {
+    const bookingId = req.params.id;
+    const userId = req.user.id;
+    const {
+      bookingDate,
+      startTime,
+      endTime,
+      eventName,
+      eventDetails,
+      eventCoordinators,
+    } = req.body;
+
+    // Find the booking
+    const booking = await Booking.findById(bookingId);
+
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    // Check if the user is the owner of the booking
+    if (booking.userId.toString() !== userId) {
+      return res.status(403).json({ message: "Not authorized to update this booking" });
+    }
+
+    // Check if the booking is already approved by admin
+    if (booking.status === "approved_by_admin") {
+      return res.status(400).json({ message: "Cannot update an approved booking" });
+    }
+
+    // Check for conflicting bookings if date or time is changed
+    if (bookingDate !== booking.bookingDate || startTime !== booking.startTime || endTime !== booking.endTime) {
+      const existingBooking = await Booking.findOne({
+        _id: { $ne: bookingId }, // Exclude current booking
+        seminarHallId: booking.seminarHallId,
+        bookingDate,
+        $or: [
+          { startTime: { $lte: endTime }, endTime: { $gte: startTime } },
+        ],
+      });
+
+      if (existingBooking) {
+        return res.status(400).json({ message: "Seminar hall is already booked for this time" });
+      }
+    }
+
+    // Update the booking
+    booking.bookingDate = bookingDate;
+    booking.startTime = startTime;
+    booking.endTime = endTime;
+    booking.eventName = eventName;
+    booking.eventDetails = eventDetails;
+    booking.eventCoordinators = eventCoordinators;
+    // Reset status to pending if it was approved by manager
+    if (booking.status === "approved_by_manager") {
+      booking.status = "pending";
+    }
+
+    await booking.save();
+
+    res.status(200).json({
+      message: "Booking updated successfully",
+      booking
+    });
+
+  } catch (error) {
+    console.error("Error in update booking route:", error);
+    res.status(500).json({ 
+      message: "Error updating booking", 
+      error: error.message 
+    });
+  }
+});
+
 
 module.exports = router;
 

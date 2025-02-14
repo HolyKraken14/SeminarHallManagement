@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import axios from "axios"
 import { AlertCircle, CheckCircle, Clock, User, Calendar, Clock3, ArrowLeft } from "lucide-react"
+import EditBookingForm from './EditBookingForm'
 
 const BookingDetailsUser = () => {
   const { bookingId } = useParams()
@@ -10,6 +11,7 @@ const BookingDetailsUser = () => {
   const [error, setError] = useState("")
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [showEditForm, setShowEditForm] = useState(false)
 
   const navigate = useNavigate()
 
@@ -61,6 +63,11 @@ const BookingDetailsUser = () => {
       setIsDeleting(false)
       setShowDeleteConfirmation(false)
     }
+  }
+
+  const handleBookingUpdate = (updatedBooking) => {
+    setBookingDetails(updatedBooking)
+    setShowEditForm(false)
   }
 
   const handleGoBack = () => {
@@ -171,12 +178,24 @@ const BookingDetailsUser = () => {
           </div>
           <div className="flex">
           {bookingDetails.status !== 'approved_by_admin' && (
+            <div className="flex space-x-4">
+              <button
+                onClick={() => setShowEditForm(true)}
+                className="items-center space-x-2 px-4 py-2 w-40 rounded-xl 
+                  bg-gradient-to-r from-indigo-600 to-indigo-700 text-white-700 
+                  hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
+              >
+                Edit Booking
+              </button>
               <button
                 onClick={() => setShowDeleteConfirmation(true)}
-                className="px-4 py-2 w-40 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                className="items-center space-x-2 px-4 py-2 w-40 rounded-xl 
+                  bg-gradient-to-r from-red-600 to-red-700 text-white-700 
+                  hover:from-red-700 hover:to-red-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
               >
                 Cancel Booking
               </button>
+            </div>
             )}
           </div>
         </div>
@@ -294,6 +313,17 @@ const BookingDetailsUser = () => {
                     {isDeleting ? "Cancelling..." : "Yes"}
                   </button>
                 </div>
+              </div>
+            </div>
+          )}
+          {showEditForm && bookingDetails && (
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+              <div className="w-full max-h-[90vh] overflow-y-auto">
+                <EditBookingForm
+                  booking={bookingDetails}
+                  onClose={() => setShowEditForm(false)}
+                  onUpdate={handleBookingUpdate}
+                />
               </div>
             </div>
           )}
