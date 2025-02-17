@@ -1,56 +1,87 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import Carousel from "./Carousel";
-import { 
-  ChevronRight, 
-  Users, 
-  Info, 
-  Cpu, 
-  ArrowLeft, 
-  Map,
-  Calendar,
-  CheckCircle,
-  XCircle
-} from 'lucide-react';
+"use client"
+
+import { useEffect, useState } from "react"
+import { useParams, useNavigate } from "react-router-dom"
+import Carousel from "./Carousel"
+import { Users, Info, Cpu, ArrowLeft, Map, Calendar, CheckCircle, XCircle, ToggleLeft, ToggleRight } from "lucide-react"
+import axios from "axios"
 
 const SeminarHallDetails = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [hall, setHall] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const [hall, setHall] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const handleToggleEquipment = async (equipmentId, currentStatus) => {
+    try {
+      const token = localStorage.getItem("token")
+      if (!token) {
+        throw new Error("Authentication token not found")
+      }
+
+      const updatedStatus = !currentStatus
+      
+      // Update the URL to use the hall ID instead of equipment ID
+      const response = await axios.patch(
+        `http://localhost:5000/api/seminar-halls/${id}/equipment/${equipmentId}`,
+        { available: updatedStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+        }
+      )
+
+      if (response.status === 200) {
+        setHall((prevHall) => ({
+          ...prevHall,
+          equipment: prevHall.equipment.map((equip) =>
+            equip._id === equipmentId ? { ...equip, available: updatedStatus } : equip
+          ),
+        }))
+      } else {
+        throw new Error("Failed to update equipment status")
+      }
+    } catch (err) {
+      console.error("Error updating equipment availability:", err)
+      alert(err.message || "Failed to update equipment availability.")
+    }
+  }
 
   useEffect(() => {
     const fetchHallDetails = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/seminar-halls/${id}`);
-        if (!response.ok) throw new Error("Failed to fetch seminar hall details");
-        const data = await response.json();
-        setHall(data);
+        const response = await fetch(`http://localhost:5000/api/seminar-halls/${id}`)
+        if (!response.ok) throw new Error("Failed to fetch seminar hall details")
+        const data = await response.json()
+        setHall(data)
       } catch (err) {
-        setError(err.message);
+        setError(err.message)
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
-    };
+    }
 
-    fetchHallDetails();
-  }, [id]);
+    fetchHallDetails()
+  }, [id])
 
-  if (loading) return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-    </div>
-  );
-
-  if (error) return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-md" role="alert">
-        <p className="font-bold">Error</p>
-        <p>{error}</p>
+  if (loading)
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </div>
-    </div>
-  );
+    )
+
+  if (error)
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-md" role="alert">
+          <p className="font-bold">Error</p>
+          <p>{error}</p>
+        </div>
+      </div>
+    )
 
   return (
     <div className="min-h-screen bg-gray-50 pb-12">
@@ -66,9 +97,11 @@ const SeminarHallDetails = () => {
       <div className="max-w-7xl mx-auto pt-8 px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="bg-white rounded-xl shadow-sm overflow-hidden mb-8">
-          <div className="items-center space-x-2 px-4 py-6 rounded-xl 
+          <div
+            className="items-center space-x-2 px-4 py-6 rounded-xl 
             bg-gradient-to-r from-indigo-600 to-indigo-700 text-white-700 
-            hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl0">
+            hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl0"
+          >
             <h1 className="text-3xl font-bold text-white mb-2">{hall.name}</h1>
             <p className="text-blue-100 flex items-center">
               <Map className="w-4 h-4 mr-2" />
@@ -76,8 +109,6 @@ const SeminarHallDetails = () => {
             </p>
           </div>
         </div>
-
-        
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Hall Information Section */}
@@ -117,55 +148,75 @@ const SeminarHallDetails = () => {
         </div>
         {/* Equipment Section */}
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
-          <div className="p-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
-              <Cpu className="w-5 h-5 mr-2 text-blue-600" />
-              Equipment
-            </h2>
-            {hall.equipment && hall.equipment.length > 0 ? (
-              <div className=" grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {hall.equipment.map((item, index) => (
-                  <div key={index} className="p-4 bg-gray-100 rounded-lg">
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-medium text-gray-800">{item.name}</h3>
-                      <span className={`flex items-center px-3 py-1 rounded-full text-sm ${
-                        item.available 
-                          ? 'bg-green-100 text-green-700' 
-                          : 'bg-red-100 text-red-700'
-                        }`}>
-                        {item.available ? (
-                          <CheckCircle className="w-4 h-4 mr-1" />
-                        ) : (
-                          <XCircle className="w-4 h-4 mr-1" />
-                        )}
-                        {item.available ? "Available" : "Not Available"}
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div className="text-gray-600">
-                        <p>Type: {item.type || "N/A"}</p>
-                        <p className="mt-1">Condition: {item.condition || "Unknown"}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-gray-800 font-medium">
-                          {item.quantity} units
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+  <div className="p-6">
+    <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+      <Cpu className="w-5 h-5 mr-2 text-blue-600" />
+      Equipment
+    </h2>
+    {hall.equipment && hall.equipment.length > 0 ? (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {hall.equipment.map((item, index) => (
+          <div key={index} className="p-4 bg-gray-100 rounded-lg">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-medium text-gray-800">{item.name}</h3>
+              <div className="flex items-center space-x-2">
+              <button
+  onClick={() => handleToggleEquipment(item._id, item.available)}
+  className="focus:outline-none flex items-center space-x-4 bg-gray-100 hover:bg-gray-200 transition duration-300 ease-in-out"
+>
+  <div
+    className={`relative w-16 h-8 flex items-center rounded-full transition-all duration-300 ease-in-out 
+      ${item.available ? "bg-green-500" : "bg-gray-400"}`}
+  >
+    <div
+      className={`absolute w-6 h-6 bg-white rounded-full shadow-lg transition-all duration-300 ease-in-out
+        ${item.available ? "transform translate-x-9" : "transform translate-x-1"}`}
+    ></div>
+  </div>
+  <span
+    className={`flex items-center px-3 py-1 rounded-full text-sm ${
+      item.available ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+    }`}
+  >
+    {item.available ? (
+      <CheckCircle className="w-4 h-4 mr-1" />
+    ) : (
+      <XCircle className="w-4 h-4 mr-1" />
+    )}
+    {item.available ? "Available" : "Not Available"}
+  </span>
+</button>
+
+                
               </div>
-            ) : (
-            <div className="text-center py-8 text-gray-500">
-              <Cpu className="w-12 h-12 mx-auto mb-4 opacity-40" />
-              <p>No equipment available for this hall.</p>
             </div>
-            )}
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="text-gray-600">
+                <p>Type: {item.type || "N/A"}</p>
+                <p className="mt-1">Condition: {item.condition || "Unknown"}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-gray-800 font-medium">{item.quantity} units</p>
+              </div>
+            </div>
           </div>
-        </div>
+        ))}
+      </div>
+    ) : (
+      <div className="text-center py-8 text-gray-500">
+        <Cpu className="w-12 h-12 mx-auto mb-4 opacity-40" />
+        <p>No equipment available for this hall.</p>
+      </div>
+    )}
+  </div>
+</div>
+
+
+
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default SeminarHallDetails;
+export default SeminarHallDetails
+

@@ -1,9 +1,8 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const SeminarHall = require("../models/seminarHallModel");
 const router = express.Router();
 const seedDatabase = require("../config/seedSeminarHall");
-
-
 
 // Get all seminar halls
 router.get("/", async (req, res) => {
@@ -20,7 +19,7 @@ router.get("/:id", async (req, res) => {
   try {
     const hallId = req.params.id;
 
-    const hall = await SeminarHall.findById(hallId) 
+    const hall = await SeminarHall.findById(hallId);
 
     if (!hall) {
       return res.status(404).json({ message: "Seminar hall not found" });
@@ -41,7 +40,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-
 // Get seminar halls with specific equipment condition (optional)
 router.get("/equipment/:condition", async (req, res) => {
   try {
@@ -57,5 +55,68 @@ router.get("/equipment/:condition", async (req, res) => {
   }
 });
 
-module.exports = router;
+// Update equipment availability in a seminar hall
 
+
+// @route   PATCH /api/seminar-halls/:hallId/equipment/:equipmentId
+// @desc    Update equipment availability status
+// @access  Private
+router.patch('/:hallId/equipment/:equipmentId', async (req, res) => {
+    try {
+        const { hallId, equipmentId } = req.params;
+        const { available } = req.body;
+
+        // Input validation
+        if (available === undefined) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Available status is required' 
+            });
+        }
+
+        // Find and update the equipment status
+        const hall = await SeminarHall.findOneAndUpdate(
+            {
+                _id: hallId,
+                'equipment._id': equipmentId
+            },
+            {
+                $set: {
+                    'equipment.$.available': available
+                }
+            },
+            {
+                new: true,
+                runValidators: true
+            }
+        );
+
+        if (!hall) {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'Seminar hall or equipment not found' 
+            });
+        }
+
+        // Find the updated equipment
+        const updatedEquipment = hall.equipment.find(
+            equip => equip._id.toString() === equipmentId
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: 'Equipment status updated successfully',
+            equipment: updatedEquipment
+        });
+
+    } catch (error) {
+        console.error('Error updating equipment:', error);
+        return res.status(500).json({ 
+            success: false,
+            message: 'Server error while updating equipment',
+            error: error.message 
+        });
+    }
+});
+
+module.exports = router;

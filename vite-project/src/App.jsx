@@ -183,6 +183,7 @@ const App = () => {
         <Route path="/booking-details/:bookingId/admin" element={<BookingDetailsAdmin />} />
         <Route path="/booking-details/:bookingId/user" element={<BookingDetailsUser />} />
         
+        
 
 
         <Route path="/booking-details/:bookingId/user" element={<BookingDetailsUser />} />
