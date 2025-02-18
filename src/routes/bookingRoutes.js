@@ -45,6 +45,9 @@ router.post("/book", async (req, res) => {
       { startTime: { $lte: endTime }, endTime: { $gte: startTime } }, // Check if there's overlap
     ],
   });
+  if(startTime>=endTime){
+    return res.status(400).json({message:"Invalid Time Slot"})
+  }
 
   if (existingBooking) {
     return res.status(400).json({ message: "Seminar hall is already booked for this time" });
@@ -615,6 +618,9 @@ router.patch("/:id", verifyToken, async (req, res) => {
       if (existingBooking) {
         return res.status(400).json({ message: "Seminar hall is already booked for this time" });
       }
+    }
+    if(startTime>=endTime){
+      return res.status(400).json({message:"Invalid Time Slot"})
     }
 
     // Update the booking
