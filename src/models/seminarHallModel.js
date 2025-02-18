@@ -16,7 +16,9 @@ const seminarHallSchema = new mongoose.Schema({
   capacity: { type: Number, required: true },
   details: { type: String },
   equipment: [equipmentSchema], 
-  images: [{ type: String }]// Embedded array of equipment
+  images: [{ type: String }],// Embedded array of equipment
+  isAvailable: { type: Boolean, default: true }, // Add this field
+  unavailabilityReason: { type: String } // Optional reason for unavailability
 });
 
 // Create the model
