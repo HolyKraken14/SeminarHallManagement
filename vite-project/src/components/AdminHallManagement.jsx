@@ -64,7 +64,7 @@ const AdminHallManagement = ({ hall, onUpdate }) => {
               onChange={() => setIsAvailable(false)}
               className="form-radio text-indigo-600"
             />
-            <span className="ml-2">Not Available</span>
+            <span className="ml-2">Unavailable</span>
           </label>
         </div>
 

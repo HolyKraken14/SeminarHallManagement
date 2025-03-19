@@ -102,6 +102,7 @@ const BookingTab = ({ seminarHall, onClose }) => {
       setEventDetails("")
       setEventCoordinators([{ name: "", contact: "", email: "" }])
       setContactErrors([])
+      setEquipmentRequest("")
 
       setTimeout(() => {
         onClose()
@@ -274,4 +275,3 @@ const BookingTab = ({ seminarHall, onClose }) => {
 }
 
 export default BookingTab
-

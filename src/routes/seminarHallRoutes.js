@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const SeminarHall = require("../models/seminarHallModel");
 const router = express.Router();
 const seedDatabase = require("../config/seedSeminarHall");
-
 // Get all seminar halls
 router.get("/", async (req, res) => {
   try {

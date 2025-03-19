@@ -403,7 +403,7 @@ const Dashboard = () => {
                         <h3 className="text-xl font-bold text-gray-800 mb-6">{hall.name}</h3>
                         <div className="space-y-3">
                           <Link
-                            to={`/seminar-hall/${hall._id}`}
+                            to={`/seminar-hall/user/${hall._id}`}
                             className="block w-full text-center px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl
                             bg-gradient-to-r from-indigo-600 to-indigo-700 text-white 
                             hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200"

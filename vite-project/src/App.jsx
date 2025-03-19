@@ -7,6 +7,7 @@ import AdminDashboard from "./components/AdminDashboard";
 import ManagerDashboard from "./components/ManagerDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SeminarHallDetails from "./components/SeminarHallDetails";
+import SeminarHallDetailsAdmin from "./components/SeminarHallDetailsAdmin";
 import BookingTab from "./components/BookingTab";
 import BookingDetailsManager from "./components/BookingDetailsManager"
 import BookingDetailsAdmin from "./components/BookingDetailsAdmin"
@@ -177,7 +178,8 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route path="/seminar-hall/:id" element={<SeminarHallDetails />} />
+        <Route path="/seminar-hall/user/:id" element={<SeminarHallDetails />} />
+        <Route path="/seminar-hall/admin/:id" element={<SeminarHallDetailsAdmin />} />
         <Route path="/book/:seminarHallId" element={<BookingTab />} />
         <Route path="/booking-details/:bookingId/manager" element={<BookingDetailsManager />} />
         <Route path="/booking-details/:bookingId/admin" element={<BookingDetailsAdmin />} />

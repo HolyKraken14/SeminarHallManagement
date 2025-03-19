@@ -18,6 +18,7 @@ router.post("/book", async (req, res) => {
     endTime,
     eventName,
     eventDetails,
+    equipmentRequest,
     eventCoordinators, // Collecting event coordinators
     specialEquipmentRequests,
   } = req.body;
