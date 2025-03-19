@@ -10,6 +10,7 @@ const BookingTab = ({ seminarHall, onClose }) => {
   const [message, setMessage] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [contactErrors, setContactErrors] = useState([])
+  const [specialEquipmentRequests, setSpecialEquipmentRequests] = useState("");
 
   const handleAddCoordinator = () => {
     setEventCoordinators([...eventCoordinators, { name: "", contact: "", email: "" }])
@@ -84,6 +85,7 @@ const BookingTab = ({ seminarHall, onClose }) => {
           eventName,
           eventDetails,
           eventCoordinators,
+          specialEquipmentRequests,
         }),
       })
 
@@ -233,6 +235,17 @@ const BookingTab = ({ seminarHall, onClose }) => {
             </button>
           </div>
 
+          {/* Special Equipment Requests */}
+          <div>
+            <label className="block mb-2">Special Equipment Requests:</label>
+            <textarea
+              value={specialEquipmentRequests}
+              onChange={(e) => setSpecialEquipmentRequests(e.target.value)}
+              placeholder="Enter any special equipment requests not listed in the hall's equipment (optional)"
+              className="w-full p-2 border rounded min-h-[100px]"
+            />
+          </div>
+          
           <button
             type="submit"
             disabled={isSubmitting}

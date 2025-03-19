@@ -19,6 +19,7 @@ router.post("/book", async (req, res) => {
     eventName,
     eventDetails,
     eventCoordinators, // Collecting event coordinators
+    specialEquipmentRequests,
   } = req.body;
 
   if (!seminarHallId || !userId || !bookingDate || !startTime || !endTime || !eventName || !eventDetails) {
@@ -63,6 +64,7 @@ router.post("/book", async (req, res) => {
     eventName,
     eventDetails,
     eventCoordinators, // Include event coordinators
+    specialEquipmentRequests,
     status: "pending",  // Initial status set to pending
   });
 
@@ -162,6 +164,7 @@ Booking Details:
 - Event: ${booking.eventName}
 - Date: ${new Date(booking.bookingDate).toLocaleDateString()}
 - Time: ${booking.startTime} - ${booking.endTime}
+${booking.specialEquipmentRequests ? `\nSpecial Equipment Requests:\n${booking.specialEquipmentRequests}` : ''}
 
 Thank you.`
       };
@@ -383,6 +386,10 @@ router.patch(
         subject: "Seminar Hall Booking Rejected",
         text: `Dear ${coordinatorName},
 Your booking for seminar hall has been rejected. 
+Booking Details:
+- Event: ${booking.eventName}
+- Date: ${new Date(booking.bookingDate).toLocaleDateString()}
+- Time: ${booking.startTime} - ${booking.endTime}
 Reason: ${reason}`
       };
 
@@ -465,6 +472,10 @@ router.patch(
         subject: "Seminar Hall Booking Rejected",
         text: `Dear ${coordinatorName},
 Your booking for seminar hall has been rejected. 
+Booking Details:
+- Event: ${booking.eventName}
+- Date: ${new Date(booking.bookingDate).toLocaleDateString()}
+- Time: ${booking.startTime} - ${booking.endTime}
 Reason: ${reason}`
       };
 
@@ -549,6 +560,7 @@ Booking Details:
 - Event: ${booking.eventName}
 - Date: ${new Date(booking.bookingDate).toLocaleDateString()}
 - Time: ${booking.startTime} - ${booking.endTime}
+${booking.specialEquipmentRequests ? `\nSpecial Equipment Requests:\n${booking.specialEquipmentRequests}` : ''}
 
 Thank you.`
         };

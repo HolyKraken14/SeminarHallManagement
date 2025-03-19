@@ -10,6 +10,7 @@ const EditBookingForm = ({ booking, onClose, onUpdate }) => {
   const [message, setMessage] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [contactErrors, setContactErrors] = useState(booking.eventCoordinators.map(() => ""))
+  const [specialEquipmentRequests, setSpecialEquipmentRequests] = useState(booking.specialEquipmentRequests);
 
   const handleAddCoordinator = () => {
     setEventCoordinators([...eventCoordinators, { name: "", contact: "", email: "" }])
@@ -72,6 +73,7 @@ const EditBookingForm = ({ booking, onClose, onUpdate }) => {
           eventName,
           eventDetails,
           eventCoordinators,
+          specialEquipmentRequests,
         }),
       })
 
@@ -222,6 +224,17 @@ const EditBookingForm = ({ booking, onClose, onUpdate }) => {
             >
               + Add Another Coordinator
             </button>
+          </div>
+
+          {/* Special Equipment Requests */}
+          <div>
+            <label className="block mb-2">Special Equipment Requests:</label>
+            <textarea
+              value={specialEquipmentRequests}
+              onChange={(e) => setSpecialEquipmentRequests(e.target.value)}
+              placeholder="Enter any special equipment requests not listed in the hall's equipment (optional)"
+              className="w-full p-2 border rounded min-h-[100px]"
+            />
           </div>
 
           <button

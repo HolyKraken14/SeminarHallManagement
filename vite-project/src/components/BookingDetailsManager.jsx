@@ -297,6 +297,17 @@ const BookingDetailsManager = () => {
             )}
           </div>
           
+          {/* Special Equipment Requests Section */}
+          {bookingDetails.specialEquipmentRequests && (
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Special Equipment Requests</h3>
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <p className="text-gray-600">
+                  {bookingDetails.specialEquipmentRequests}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
         <div>
                 {(bookingDetails.status === 'rejected_by_manager' || 

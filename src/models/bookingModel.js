@@ -27,6 +27,10 @@ const bookingSchema = new mongoose.Schema({
   rejectionReason: {
     type: String,
     default: null
+  },
+  specialEquipmentRequests: { 
+    type: String,
+    default: '' 
   }
 }, { timestamps: true });
 

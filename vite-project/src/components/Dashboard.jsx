@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import { Link, useNavigate, useLocation } from "react-router-dom"
 import { Menu, Home, User, Calendar, Mail, LogOut, MessageSquare, X } from "lucide-react"
 import BookingTab from "./BookingTab"
+import SeminarHallFilters from './SeminarHallFilters';
 
 const ChatbaseChatbot = () => {
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
@@ -61,23 +62,25 @@ const Dashboard = () => {
   const [error, setError] = useState(null)
   //const [activeTab, setActiveTab] = useState("Dashboard");
   const [selectedHall, setSelectedHall] = useState(null)
+  const [filteredHalls, setFilteredHalls] = useState([]);
 
   // Existing fetch functions remain the same
   useEffect(() => {
     const fetchSeminarHalls = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/seminar-halls")
-        if (!response.ok) throw new Error("Failed to fetch seminar halls")
-        const data = await response.json()
-        setSeminarHalls(data)
+        const response = await fetch("http://localhost:5000/api/seminar-halls");
+        if (!response.ok) throw new Error("Failed to fetch seminar halls");
+        const data = await response.json();
+        setSeminarHalls(data);
+        setFilteredHalls(data);  // Add this line
       } catch (err) {
-        setError(err.message)
+        setError(err.message);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-    fetchSeminarHalls()
-  }, [])
+    };
+    fetchSeminarHalls();
+  }, []);
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -395,8 +398,14 @@ const Dashboard = () => {
         <main className="p-8 max-w-[1920px] mx-auto">
           {activeTab === "Dashboard" && (
             <div className="space-y-8">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-gray-800">Book a Seminar Hall</h2>
+                <SeminarHallFilters 
+                  seminarHalls={seminarHalls}
+                  onFilterChange={(filteredHalls) => {
+                    setFilteredHalls(filteredHalls);
+                  }}
+                />
               </div>
 
               {loading && (
@@ -406,7 +415,7 @@ const Dashboard = () => {
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-3 gap-8">
-                {seminarHalls.map((hall) => (
+                {filteredHalls.map((hall) => (
                   <div
                     key={hall._id}
                     className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 

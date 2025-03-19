@@ -177,7 +177,7 @@ const BookingDetailsUser = () => {
             <h1 className="text-2xl font-bold text-gray-900">Booking Details</h1>
           </div>
           <div className="flex">
-          {bookingDetails.status !== 'approved_by_admin' && (
+          {(bookingDetails.status !== 'approved_by_admin' && bookingDetails.status !== 'rejected_by_admin' && bookingDetails.status !== 'rejected_by_manager') && (
             <div className="flex space-x-4">
               <button
                 onClick={() => setShowEditForm(true)}
@@ -292,8 +292,21 @@ const BookingDetailsUser = () => {
               <p className="text-gray-500">No coordinators specified.</p>
             )}
           </div>
+          
+          {/* Special Equipment Requests Section */}
+          {bookingDetails.specialEquipmentRequests && (
+            <div className="mt-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Special Equipment Requests</h3>
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <p className="text-gray-600">
+                  {bookingDetails.specialEquipmentRequests}
+                </p>
+              </div>
+            </div>
+          )}
+
           {showDeleteConfirmation && (
-            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 h-full">
               <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Confirm</h3>
                 <p className="text-gray-600 mb-6">Are you sure you want to delete this booking? This action cannot be undone.</p>
