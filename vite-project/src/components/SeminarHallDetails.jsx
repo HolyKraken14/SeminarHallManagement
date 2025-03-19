@@ -161,45 +161,43 @@ const SeminarHallDetails = () => {
               <h3 className="font-medium text-gray-800">{item.name}</h3>
               <div className="flex items-center space-x-2">
               <span
-    className={`flex items-center px-3 py-1 rounded-full text-sm ${
-      item.available ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-    }`}
-  >
-    {item.available ? (
-      <CheckCircle className="w-4 h-4 mr-1" />
-    ) : (
-      <XCircle className="w-4 h-4 mr-1" />
-    )}
-    {item.available ? "Available" : "Not Available"}
-  </span>
+                className={`flex items-center px-3 py-1 rounded-full text-sm ${
+                  item.available ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                }`}
+              >
+                {item.available ? (
+                  <CheckCircle className="w-4 h-4 mr-1" />
+                ) : (
+                  <XCircle className="w-4 h-4 mr-1" />
+                )}
+                {item.available ? "Available" : "Not Available"}
+              </span>
               {/* <button
-  onClick={() => handleToggleEquipment(item._id, item.available)}
-  className="focus:outline-none flex items-center space-x-4 bg-gray-100 hover:bg-gray-200 transition duration-300 ease-in-out"
->
-  <div
-    className={`relative w-16 h-8 flex items-center rounded-full transition-all duration-300 ease-in-out 
-      ${item.available ? "bg-green-500" : "bg-gray-400"}`}
-  >
-    <div
-      className={`absolute w-6 h-6 bg-white rounded-full shadow-lg transition-all duration-300 ease-in-out
-        ${item.available ? "transform translate-x-9" : "transform translate-x-1"}`}
-    ></div>
-  </div>
-  <span
-    className={`flex items-center px-3 py-1 rounded-full text-sm ${
-      item.available ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-    }`}
-  >
-    {item.available ? (
-      <CheckCircle className="w-4 h-4 mr-1" />
-    ) : (
-      <XCircle className="w-4 h-4 mr-1" />
-    )}
-    {item.available ? "Available" : "Not Available"}
-  </span>
-</button> */}
-
-                
+                onClick={() => handleToggleEquipment(item._id, item.available)}
+                className="focus:outline-none flex items-center space-x-4 bg-gray-100 hover:bg-gray-200 transition duration-300 ease-in-out"
+              >
+                <div
+                  className={`relative w-16 h-8 flex items-center rounded-full transition-all duration-300 ease-in-out 
+                    ${item.available ? "bg-green-500" : "bg-gray-400"}`}
+                >
+                  <div
+                    className={`absolute w-6 h-6 bg-white rounded-full shadow-lg transition-all duration-300 ease-in-out
+                      ${item.available ? "transform translate-x-9" : "transform translate-x-1"}`}
+                  ></div>
+                </div>
+                <span
+                  className={`flex items-center px-3 py-1 rounded-full text-sm ${
+                    item.available ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {item.available ? (
+                    <CheckCircle className="w-4 h-4 mr-1" />
+                  ) : (
+                    <XCircle className="w-4 h-4 mr-1" />
+                  )}
+                  {item.available ? "Available" : "Not Available"}
+                </span>
+              </button> */}   
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
