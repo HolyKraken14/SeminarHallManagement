@@ -10,6 +10,7 @@ const BookingTab = ({ seminarHall, onClose }) => {
   const [message, setMessage] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [contactErrors, setContactErrors] = useState([])
+  const [equipmentRequest, setEquipmentRequest] = useState("")
 
   const handleAddCoordinator = () => {
     setEventCoordinators([...eventCoordinators, { name: "", contact: "", email: "" }])
@@ -84,6 +85,7 @@ const BookingTab = ({ seminarHall, onClose }) => {
           eventName,
           eventDetails,
           eventCoordinators,
+          equipmentRequest,
         }),
       })
 
@@ -100,6 +102,7 @@ const BookingTab = ({ seminarHall, onClose }) => {
       setEventDetails("")
       setEventCoordinators([{ name: "", contact: "", email: "" }])
       setContactErrors([])
+      setEquipmentRequest("")
 
       setTimeout(() => {
         onClose()
@@ -233,6 +236,17 @@ const BookingTab = ({ seminarHall, onClose }) => {
             </button>
           </div>
 
+          <div>
+            <label className="block mb-2">Equipment Request:</label>
+            <input
+              type="text"
+              value={equipmentRequest}
+              onChange={(e) => setEquipmentRequest(e.target.value)}
+              placeholder="Specify any additional equipment needed"
+              className="w-full p-2 border rounded"
+            />
+          </div>
+
           <button
             type="submit"
             disabled={isSubmitting}
@@ -261,4 +275,3 @@ const BookingTab = ({ seminarHall, onClose }) => {
 }
 
 export default BookingTab
-

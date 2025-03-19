@@ -27,7 +27,8 @@ const bookingSchema = new mongoose.Schema({
   rejectionReason: {
     type: String,
     default: null
-  }
+  },
+  equipmentRequest :{type:String , required:false},
 }, { timestamps: true });
 
 const Booking = mongoose.model('Booking', bookingSchema);

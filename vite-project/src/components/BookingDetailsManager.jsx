@@ -296,24 +296,31 @@ const BookingDetailsManager = () => {
               <p className="text-gray-500">No coordinators specified.</p>
             )}
           </div>
+
+          {/* Equipment Request Section */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Equipment Request</h3>
+            <p className="text-gray-600">{bookingDetails.equipmentRequest || "No equipment requested."}</p>
+          </div>
+
           
         </div>
+
         <div>
-                {(bookingDetails.status === 'rejected_by_manager' || 
-                  bookingDetails.status === 'rejected_by_admin') && 
-                  bookingDetails.rejectionReason && (
-                  <div className="px-6 py-4 bg-red-50 border-t border-red-100">
-                    <div className="flex items-start space-x-3">
-                      <AlertCircle className="w-5 h-5 text-red-500 mt-0.5" />
-                      <div>
-                        <h4 className="text-sm font-semibold text-red-800">Rejection Reason:</h4>
-                        <p className="mt-1 text-sm text-red-700">{bookingDetails.rejectionReason}</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
+          {(bookingDetails.status === 'rejected_by_manager' || 
+            bookingDetails.status === 'rejected_by_admin') && 
+            bookingDetails.rejectionReason && (
+            <div className="px-6 py-4 bg-red-50 border-t border-red-100">
+              <div className="flex items-start space-x-3">
+                <AlertCircle className="w-5 h-5 text-red-500 mt-0.5" />
+                <div>
+                  <h4 className="text-sm font-semibold text-red-800">Rejection Reason:</h4>
+                  <p className="mt-1 text-sm text-red-700">{bookingDetails.rejectionReason}</p>
                 </div>
-        
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Footer Actions */}
         <div className="border-t border-gray-200 px-6 py-4 bg-gray-50 space-y-4">
@@ -361,13 +368,6 @@ const BookingDetailsManager = () => {
               </div>
             </div>
           )}
-
-          {/* <button
-            onClick={() => navigate(-1)}
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Go Back
-          </button> */}
         </div>
       </div>
     </div>

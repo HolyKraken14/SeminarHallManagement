@@ -18,6 +18,7 @@ router.post("/book", async (req, res) => {
     endTime,
     eventName,
     eventDetails,
+    equipmentRequest,
     eventCoordinators, // Collecting event coordinators
   } = req.body;
 
@@ -63,6 +64,7 @@ router.post("/book", async (req, res) => {
     eventName,
     eventDetails,
     eventCoordinators, // Include event coordinators
+    equipmentRequest, 
     status: "pending",  // Initial status set to pending
   });
 
@@ -383,6 +385,11 @@ router.patch(
         subject: "Seminar Hall Booking Rejected",
         text: `Dear ${coordinatorName},
 Your booking for seminar hall has been rejected. 
+Booking Details:
+- Event: ${booking.eventName}
+- Date: ${new Date(booking.bookingDate).toLocaleDateString()}
+- Time: ${booking.startTime} - ${booking.endTime}
+
 Reason: ${reason}`
       };
 
@@ -465,6 +472,11 @@ router.patch(
         subject: "Seminar Hall Booking Rejected",
         text: `Dear ${coordinatorName},
 Your booking for seminar hall has been rejected. 
+Booking Details:
+- Event: ${booking.eventName}
+- Date: ${new Date(booking.bookingDate).toLocaleDateString()}
+- Time: ${booking.startTime} - ${booking.endTime}
+
 Reason: ${reason}`
       };
 
