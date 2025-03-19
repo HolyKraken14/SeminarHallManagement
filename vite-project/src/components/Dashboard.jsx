@@ -33,6 +33,16 @@ const ChatbaseChatbot = () => {
   );
 };
 
+const AvailabilityBadge = ({ isAvailable, reason }) => (
+  <div className={`absolute top-4 left-4 px-3 py-1 rounded-lg ${
+    isAvailable 
+      ? 'bg-green-100 text-green-800' 
+      : 'bg-red-100 text-red-800'
+  } font-medium text-sm`}>
+    {isAvailable ? 'Available' : 'Not Available'}
+  </div>
+);
+
 const Dashboard = () => {
   const location = useLocation()
   const navigate = useNavigate()
@@ -411,9 +421,16 @@ const Dashboard = () => {
                       <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-xl text-sm font-medium text-gray-700">
                         ID: {hall.displayId}
                       </div>
+                      <AvailabilityBadge 
+                        isAvailable={hall.isAvailable} 
+                        reason={hall.unavailabilityReason}
+                      />
                     </div>
                     <div className="p-6">
                       <h3 className="text-xl font-bold text-gray-800 mb-6">{hall.name}</h3>
+                      {!hall.isAvailable && (
+                        <p className="text-red-600 text-sm mb-4">{hall.unavailabilityReason}</p>
+                      )}
                       <div className="space-y-3">
                         <Link
                           to={`/seminar-hall/${hall._id}`}
@@ -424,10 +441,13 @@ const Dashboard = () => {
                         </Link>
                         <button
                           onClick={() => setSelectedHall(hall)}
-                          className="w-full px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-xl 
-                            hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
+                          disabled={!hall.isAvailable}
+                          className={`w-full px-6 py-3 rounded-xl transition-all duration-200 font-medium 
+                            ${hall.isAvailable 
+                              ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white hover:from-indigo-700 hover:to-indigo-800 shadow-lg hover:shadow-xl' 
+                              : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}
                         >
-                          Book Now
+                          {hall.isAvailable ? 'Book Now' : 'Not Available'}
                         </button>
                       </div>
                     </div>

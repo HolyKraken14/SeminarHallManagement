@@ -118,4 +118,29 @@ router.patch('/:hallId/equipment/:equipmentId', async (req, res) => {
     }
 });
 
+// Add this route to update availability (admin only)
+router.patch("/:id/availability", async (req, res) => {
+  try {
+    const { isAvailable, unavailabilityReason } = req.body;
+    const hallId = req.params.id;
+
+    const hall = await SeminarHall.findById(hallId);
+    if (!hall) {
+      return res.status(404).json({ message: "Seminar hall not found" });
+    }
+
+    hall.isAvailable = isAvailable;
+    hall.unavailabilityReason = unavailabilityReason;
+    await hall.save();
+
+    res.status(200).json({
+      message: `Seminar hall ${isAvailable ? 'enabled' : 'disabled'} successfully`,
+      hall
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Error updating seminar hall availability", error: err.message });
+  }
+});
+
+
 module.exports = router;
