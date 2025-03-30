@@ -472,10 +472,9 @@ const AdminDashboard = () => {
                       )}
                       <div className="space-y-3">
                         <Link
-                          to={`/seminar-hall/${hall._id}`}
-                          className="block w-full text-center px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl
-                            bg-gradient-to-r from-indigo-600 to-indigo-700 text-white 
-                            hover:from-indigo-700 hover:to-indigo-800 transition-all duration-200"
+                          to={`/seminar-hall/admin/${hall._id}`}
+                          className="block w-full text-center px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-xl 
+                            hover:bg-gray-50 transition-colors duration-200 font-medium"
                         >
                           View Details
                         </Link>

@@ -7,7 +7,7 @@ import Carousel from "./Carousel"
 import { Users, Info, Cpu, ArrowLeft, Map, Calendar, CheckCircle, XCircle, ToggleLeft, ToggleRight } from "lucide-react"
 import axios from "axios"
 
-const SeminarHallDetails = () => {
+const SeminarHallDetailsAdmin = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const [hall, setHall] = useState(null)
@@ -161,7 +161,7 @@ const SeminarHallDetails = () => {
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-medium text-gray-800">{item.name}</h3>
               <div className="flex items-center space-x-2">
-              <span
+              {/* <span
     className={`flex items-center px-3 py-1 rounded-full text-sm ${
       item.available ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
     }`}
@@ -172,8 +172,8 @@ const SeminarHallDetails = () => {
       <XCircle className="w-4 h-4 mr-1" />
     )}
     {item.available ? "Available" : "Not Available"}
-  </span>
-              {/* <button
+  </span> */}
+              <button
   onClick={() => handleToggleEquipment(item._id, item.available)}
   className="focus:outline-none flex items-center space-x-4 bg-gray-100 hover:bg-gray-200 transition duration-300 ease-in-out"
 >
@@ -198,7 +198,7 @@ const SeminarHallDetails = () => {
     )}
     {item.available ? "Available" : "Not Available"}
   </span>
-</button> */}
+</button>
 
                 
               </div>
@@ -231,5 +231,5 @@ const SeminarHallDetails = () => {
   )
 }
 
-export default SeminarHallDetails
+export default SeminarHallDetailsAdmin
 
