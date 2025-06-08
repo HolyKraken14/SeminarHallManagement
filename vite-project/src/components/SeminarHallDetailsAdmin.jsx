@@ -149,83 +149,66 @@ const SeminarHallDetailsAdmin = () => {
         </div>
         {/* Equipment Section */}
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
-  <div className="p-6">
-    <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
-      <Cpu className="w-5 h-5 mr-2 text-blue-600" />
-      Equipment
-    </h2>
-    {hall.equipment && hall.equipment.length > 0 ? (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {hall.equipment.map((item, index) => (
-          <div key={index} className="p-4 bg-gray-100 rounded-lg">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="font-medium text-gray-800">{item.name}</h3>
-              <div className="flex items-center space-x-2">
-              {/* <span
-    className={`flex items-center px-3 py-1 rounded-full text-sm ${
-      item.available ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-    }`}
-  >
-    {item.available ? (
-      <CheckCircle className="w-4 h-4 mr-1" />
-    ) : (
-      <XCircle className="w-4 h-4 mr-1" />
-    )}
-    {item.available ? "Available" : "Not Available"}
-  </span> */}
-              <button
-  onClick={() => handleToggleEquipment(item._id, item.available)}
-  className="focus:outline-none flex items-center space-x-4 bg-gray-100 hover:bg-gray-200 transition duration-300 ease-in-out"
->
-  <div
-    className={`relative w-16 h-8 flex items-center rounded-full transition-all duration-300 ease-in-out 
-      ${item.available ? "bg-green-500" : "bg-gray-400"}`}
-  >
-    <div
-      className={`absolute w-6 h-6 bg-white rounded-full shadow-lg transition-all duration-300 ease-in-out
-        ${item.available ? "transform translate-x-9" : "transform translate-x-1"}`}
-    ></div>
-  </div>
-  <span
-    className={`flex items-center px-3 py-1 rounded-full text-sm ${
-      item.available ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-    }`}
-  >
-    {item.available ? (
-      <CheckCircle className="w-4 h-4 mr-1" />
-    ) : (
-      <XCircle className="w-4 h-4 mr-1" />
-    )}
-    {item.available ? "Available" : "Not Available"}
-  </span>
-</button>
-
-                
+          <div className="p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
+              <Cpu className="w-5 h-5 mr-2 text-blue-600" />
+              Equipment
+            </h2>
+            {hall.equipment && hall.equipment.length > 0 ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {hall.equipment.map((item, index) => (
+                  <div key={index} className="p-4 bg-gray-100 rounded-lg">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-medium text-gray-800">{item.name}</h3>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => handleToggleEquipment(item._id, item.available)}
+                          className="focus:outline-none flex items-center space-x-4 bg-gray-100 hover:bg-gray-200 transition duration-300 ease-in-out"
+                        >
+                          <div
+                            className={`relative w-16 h-8 flex items-center rounded-full transition-all duration-300 ease-in-out 
+                              ${item.available ? "bg-green-500" : "bg-gray-400"}`}
+                          >
+                            <div
+                              className={`absolute w-6 h-6 bg-white rounded-full shadow-lg transition-all duration-300 ease-in-out
+                                ${item.available ? "transform translate-x-9" : "transform translate-x-1"}`}
+                            ></div>
+                          </div>
+                          <span
+                            className={`flex items-center px-3 py-1 rounded-full text-sm ${
+                              item.available ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                            }`}
+                          >
+                            {item.available ? (
+                              <CheckCircle className="w-4 h-4 mr-1" />
+                            ) : (
+                              <XCircle className="w-4 h-4 mr-1" />
+                            )}
+                            {item.available ? "Available" : "Not Available"}
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div className="text-gray-600">
+                        <p>Type: {item.type || "N/A"}</p>
+                        <p className="mt-1">Condition: {item.condition || "Unknown"}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-gray-800 font-medium">{item.quantity} units</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
+            ) : (
+            <div className="text-center py-8 text-gray-500">
+              <Cpu className="w-12 h-12 mx-auto mb-4 opacity-40" />
+              <p>No equipment available for this hall.</p>
             </div>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="text-gray-600">
-                <p>Type: {item.type || "N/A"}</p>
-                <p className="mt-1">Condition: {item.condition || "Unknown"}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-gray-800 font-medium">{item.quantity} units</p>
-              </div>
-            </div>
+            )}
           </div>
-        ))}
-      </div>
-    ) : (
-      <div className="text-center py-8 text-gray-500">
-        <Cpu className="w-12 h-12 mx-auto mb-4 opacity-40" />
-        <p>No equipment available for this hall.</p>
-      </div>
-    )}
-  </div>
-</div>
-
-
-
+        </div>
       </div>
     </div>
   )

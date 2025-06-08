@@ -43,16 +43,16 @@ const AdminHallManagement = ({ hall, onUpdate }) => {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      <h3 className="text-lg font-semibold mb-4">Manage Hall Availability</h3>
+      <h3 className="text-lg font-semibold">Manage Hall Availability</h3>
       
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-32">
           <label className="inline-flex items-center">
             <input
               type="radio"
               checked={isAvailable}
               onChange={() => setIsAvailable(true)}
-              className="form-radio text-indigo-600"
+              className="form-radio text-indigo-600 mt-4"
             />
             <span className="ml-2">Available</span>
           </label>
@@ -62,7 +62,7 @@ const AdminHallManagement = ({ hall, onUpdate }) => {
               type="radio"
               checked={!isAvailable}
               onChange={() => setIsAvailable(false)}
-              className="form-radio text-indigo-600"
+              className="form-radio text-indigo-600 mt-4"
             />
             <span className="ml-2">Unavailable</span>
           </label>

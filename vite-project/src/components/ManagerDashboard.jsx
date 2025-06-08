@@ -2,6 +2,16 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Menu, Home, User, Calendar, LogOut, Mail } from 'lucide-react';
 
+const AvailabilityBadge = ({ isAvailable, reason }) => (
+  <div className={`absolute top-4 left-4 px-3 py-1 rounded-lg ${
+    isAvailable 
+      ? 'bg-green-100 text-green-800' 
+      : 'bg-red-100 text-red-800'
+  } font-medium text-sm`}>
+    {isAvailable ? 'Available' : 'Not Available'}
+  </div>
+);
+
 const ProfileSection = ({ user, loading, error }) => {
   if (loading) {
     return (
@@ -398,9 +408,16 @@ const Dashboard = () => {
                         <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-xl text-sm font-medium text-gray-700">
                           ID: {hall.displayId}
                         </div>
+                        <AvailabilityBadge 
+                          isAvailable={hall.isAvailable} 
+                          reason={hall.unavailabilityReason}
+                        />
                       </div>
                       <div className="p-6">
                         <h3 className="text-xl font-bold text-gray-800 mb-6">{hall.name}</h3>
+                        {!hall.isAvailable && (
+                          <p className="text-red-600 text-sm mb-4">{hall.unavailabilityReason}</p>
+                        )}
                         <div className="space-y-3">
                           <Link
                             to={`/seminar-hall/user/${hall._id}`}
@@ -419,7 +436,7 @@ const Dashboard = () => {
             </div>
           )}
 
-{state.activeTab === "Bookings" && (
+          {state.activeTab === "Bookings" && (
           <div className="space-y-8">
             <div>
               <h2 className="text-2xl font-bold text-gray-800 mb-6">All Bookings</h2>
